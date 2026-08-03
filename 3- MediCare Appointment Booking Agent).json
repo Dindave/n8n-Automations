@@ -1,0 +1,2537 @@
+{
+  "name": "3- MediCare Appointment Booking Agent)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 805691668,
+          "mode": "list",
+          "cachedResultName": "Appointment Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=805691668"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "id": "705f9005-0575-468d-8375-724dcc67f4d6",
+      "name": "New Booking Form Response",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        0
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "ySVfefJUa4J0jWSu",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a set of every confirmationId already in use\nconst usedIds = new Set(items.map(i => i.json.confirmationId).filter(Boolean));\n\nfunction generateId() {\n  const digits = Math.floor(1000 + Math.random() * 9000); // always 4 digits\n  return 'MC-' + digits;\n}\n\nlet newId = generateId();\nlet attempts = 0;\nwhile (usedIds.has(newId) && attempts < 50) {\n  newId = generateId();\n  attempts++;\n}\n\nconst booking = $('New Booking Form Response').first().json;\nbooking.confirmationId = newId;\nbooking.status = 'Pending';\nreturn [{ json: booking }];"
+      },
+      "id": "a0aa1cfb-c99e-4c40-a39f-d45b2410ca12",
+      "name": "Generate Unique Confirmation ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 805691668,
+          "mode": "list",
+          "cachedResultName": "Appointment Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=805691668"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.Timestamp }}",
+            "row_number": 0,
+            "confirmationID": "={{ $json.confirmationId }}",
+            "Status": "={{ $json.status }}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Home Address",
+              "displayName": "Home Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Preferred Appointment Date ",
+              "displayName": "Preferred Appointment Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Relevant Medical Background",
+              "displayName": "Relevant Medical Background",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "How Do You Hear About Us?",
+              "displayName": "How Do You Hear About Us?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "confirmationID",
+              "displayName": "confirmationID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3064710d-1f44-466e-8a8e-306a27769df2",
+      "name": "Write Confirmation ID Back to Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        288,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.output }}",
+              "rightValue": true,
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              },
+              "id": "737be880-ad0c-40dd-b3ae-f7c0b5de1e74"
+            },
+            {
+              "id": "fd73cc99-2444-4e27-8d15-a4732bb20c6c",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7e410133-4ab8-406c-ac4c-8fe971ba0f73",
+      "name": "Is There a Conflict?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Generate Unique Confirmation ID').item.json['Email Address'] }}",
+        "subject": "=Pick A New Appointment Date And Time",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "MediCare Health Centre",
+          "replyTo": "dinaholuwabori@gmail.com"
+        }
+      },
+      "id": "ea4c2619-a80d-4245-a0a6-9d489b28c2f4",
+      "name": "Send: Conflict - Pick New Date",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1296,
+        176
+      ],
+      "webhookId": "89e5489c-7c91-4d52-9b0c-05fdd28b9c0f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 805691668,
+          "mode": "list",
+          "cachedResultName": "Appointment Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=805691668"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": 0,
+            "Status": "Awaiting New Appointment Date And Time",
+            "confirmationID": "={{ $('Edit Fields').item.json.confirmationId }}"
+          },
+          "matchingColumns": [
+            "confirmationID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Home Address",
+              "displayName": "Home Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Preferred Appointment Date ",
+              "displayName": "Preferred Appointment Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Relevant Medical Background",
+              "displayName": "Relevant Medical Background",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "How Do You Hear About Us?",
+              "displayName": "How Do You Hear About Us?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "confirmationID",
+              "displayName": "confirmationID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "d8dcc36e-4d9f-4b34-ae0f-9d6f878a3b0a",
+      "name": "Update Sheet: Awaiting New Date",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1456,
+        176
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "=Re:Pick A New Appointment Date and Time"
+        },
+        "options": {}
+      },
+      "id": "a87c6c53-e88b-4109-be87-593445ba2067",
+      "name": "New Email Reply Received",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        448
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eeac7b58-9299-4c0f-b452-ad5a0fc3c072",
+              "name": "Full Name",
+              "value": "={{ $('Generate Unique Confirmation ID').item.json['Full Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "8b560888-4200-4779-b778-99704e78c971",
+              "name": "Email Address",
+              "value": "={{ $('Generate Unique Confirmation ID').item.json['Email Address'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2b0f95bf-d1b2-4689-aeb4-3ed1bfae4887",
+              "name": "Preferred Appointment Date ",
+              "value": "={{ $('Generate Unique Confirmation ID').item.json['Preferred Appointment Date '] }}",
+              "type": "string"
+            },
+            {
+              "id": "5bbcfa0f-8265-4e9d-a150-04693b9826fe",
+              "name": "Reason For Visit",
+              "value": "={{ $('Generate Unique Confirmation ID').item.json['Reason For Visit'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a2e13562-b784-4402-a1de-7639bec2d920",
+              "name": "confirmationId",
+              "value": "={{ $('Generate Unique Confirmation ID').item.json.confirmationId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        0
+      ],
+      "id": "ecf7afa2-c3da-404f-af25-8e9a2376cd0a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['Full Name'] }}\n{{ $json['Email Address'] }}\n{{ $json['Preferred Appointment Date '] }}\n{{ $json['Reason For Visit'] }}\n{{ $json.confirmationId }}",
+        "options": {
+          "systemMessage": "You are MediCare's appointment booking agent. You will receive a person's booking details (full name, email address, confirmation ID, preferred appointment date, preferred appointment time and reason for visit and you have access to a Google Calendar tool to check availability and create events.\n\nBUSINESS HOURS RULES (apply these before anything else):\n- Monday to Friday: appointments can only be booked between 9:00 AM and 3:00 PM\n- Saturday and Sunday: appointments can only be booked between 10:00 AM and 2:00 PM\n- Each appointment is 1 hour long\n- No appointments outside these windows, under any circumstance, even if the calendar is empty\n\nYOUR STEP-BY-STEP PROCESS:\n\n1. Check business hours first.\n   Look at the requested date and time. Determine what day of the week it falls on, then check whether the requested time falls inside that day's allowed window.\n   - If it does NOT fall inside the allowed window, check the calendar to give three available date and time ensure it is within the available days and time and respond with a REJECTION-OUTSIDE HOURS\n\n2. If the time is within business hours, check Google Calendar.\n   Use your calendar tool to look for any existing event that overlaps with the requested date and time.\n\n3. If the slot is free:\n   - Use your calendar tool to create the appointment as a calendar event. Include the person's full name, email, confirmation ID, and appointment reason (if provided) in the event description. The title on the google calendar should be Appointment with [Full Name].\n   - Respond with a confirmation message (see \"CONFIRMED\" format below).\n\n4. If the slot is NOT free (there's a conflict):\n   - Do not book anything.\n   - Search the calendar for open slots across the next 7 days, respecting the business hours rules above (weekday slots 9am-3pm, weekend slots 10am-2pm).\n   - Suggest up to 3 open alternatives.\n   - Respond with an unavailable message (see \"UNAVAILABLE - SUGGEST ALTERNATIVES\" format below).\n\nRESPONSE FORMATS (always use one of these exactly, filling in the details):\n\nCONFIRMED:\n\"Hi [Full Name], your appointment is confirmed for [Date] at [Time]. Your confirmation ID is [Confirmation ID]. We look forward to seeing you!\"\n\nREJECTION - OUTSIDE HOURS:\n\"Hi [Full Name], sorry, we can't book an appointment at that time. Appointments are available Monday to Friday between 9:00 AM and 3:00 PM, and Saturday to Sunday between 10:00 AM and 2:00 PM.  Here are some available alternatives: [CHECK THE GOOGLE CALENDAR AND LIST UP TO 3 OPEN ALTERNATIVES ON THE SAME DAY OR THE DAY AFTER]. Please reply with your preferred choice.\" \n\nUNAVAILABLE - SUGGEST ALTERNATIVES:\n\"Hi [Full Name], sorry, [Date] at [Time] is already booked. Here are some available alternatives: [list up to 3 options with date and time that same day if available or the next day]. Please reply with your preferred choice.\"\n\nIMPORTANT RULES:\n- Never invent or guess calendar availability - always use the calendar tool to check.\n- Never book an appointment outside the stated business hours, even if asked directly.\n- Always include the confirmation ID in your response so the person can reference their booking.\n- Keep your tone warm, professional, and concise - no unnecessary filler.\n- If any required detail (name, email, date, or time) is missing from the input, ask for it before proceeding rather than guessing.\n- Ensure to take note of the date booked and book that same day or a day after if the date/time is unavailable or rejected. e.g If the day booked is 1st of August, 2026, suggest the same day with different time or the day after which will be 2nd August, 2026 depending on the time available on the calendar tool. Don't suggest up to 2 days from the preferred day.\n- Carefully take note of the date and time. \n- Ensure you carefully check the calendar to be sure a day and booked before showing the output. Ensure no error.\n- Ensure you use the WAT Time zone, Africa/Lagos. when the time booked is 12:00pm, don't book it as 1:00pm on the calendar, book it as 12:00p.m. Be very mindful of this."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        736,
+        -16
+      ],
+      "id": "11a1c689-6582-4cde-88d6-ea73112cc5a9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o",
+          "cachedResultUrl": ""
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        272
+      ],
+      "id": "80b39785-12e1-4205-8bf7-f66849acb029",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.confirmationId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        832,
+        288
+      ],
+      "id": "e58cd78e-a867-48a4-bf94-ed873bacd3aa",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "dinaholuwabori@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dinaholuwabori@gmail.com"
+        },
+        "start": "={{ new Date($json['Preferred Appointment Date ']).toISOString() }}",
+        "end": "={{ new Date(new Date($json['Preferred Appointment Date ']).getTime() + 3600000).toISOString()}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        992,
+        288
+      ],
+      "id": "a2d8880b-5edd-42e1-a9b6-6fcec41a3a80",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "dv1qFkAXxNlbbqxB",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields1').item.json['Full Name'] }}\n{{ $('Edit Fields1').item.json['Email Address'] }}\n{{ $json['Preferred Appointment Date '] }}\n{{ $json.confirmationID }}\n{{ $('Get row(s) in sheet2').item.json['Reason For Visit'] }}",
+        "options": {
+          "systemMessage": "=You are MediCare's appointment booking agent. You will receive a person's booking details (full name, email address, confirmation ID, preferred appointment date, preferred appointment time and reason for visit and you have access to a Google Calendar tool to check availability and create events.\n\nBUSINESS HOURS RULES (apply these before anything else):\n- Monday to Friday: appointments can only be booked between 9:00 AM and 3:00 PM\n- Saturday and Sunday: appointments can only be booked between 10:00 AM and 2:00 PM\n- Each appointment is 1 hour long\n- No appointments outside these windows, under any circumstance, even if the calendar is empty\n\nYOUR STEP-BY-STEP PROCESS:\n\n1. If the slot is free:\n   - Ensure to use the calendar tool to create the appointment as a calendar event. Include the person's full name, email, confirmation ID, and appointment reason (if provided) in the event description. The title on the google calendar should be Appointment with [Full Name].\n   - Respond with a confirmation message (see \"CONFIRMED\" format below).\n- If no year is mentioned, assume 2026\n- If no explicit minutes are given, assume :00\n- If you cannot confidently determine a date/time, respond with \"UNCLEAR\"\n\n\nRESPONSE FORMATS:\n\"Hi [Full Name], your appointment is confirmed for [Date] at [Time]. Your confirmation ID is [Confirmation ID]. We look forward to seeing you!\"\n\n\nIMPORTANT RULES:\n- Never invent or guess calendar availability - always use the calendar tool to check.\n- Always include the confirmation ID in your response so the person can reference their booking.\n- Keep your tone warm, professional, and concise - no unnecessary filler.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        944,
+        448
+      ],
+      "id": "5361ac82-506c-4690-b3f0-a88ace2fe883",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dade1032-4bc5-4149-84da-cdfb5346ee01",
+              "name": "Email Address",
+              "value": "={{ $('New Email Reply Received').item.json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "90625b7c-cab7-443b-b1ad-7f59b4e56fd8",
+              "name": "text",
+              "value": "={{ $('New Email Reply Received').item.json.text.split('\\n')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "dfda88d0-e6b9-4ea5-8040-a4e6c3c60783",
+              "name": "confirmationID",
+              "value": "={{ $json.confirmationID }}",
+              "type": "string"
+            },
+            {
+              "id": "58dfc710-c976-4ec2-9309-8798361d5840",
+              "name": "Full Name",
+              "value": "={{ $json['Full Name'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        448
+      ],
+      "id": "eb1e66f0-eb91-47b9-81cb-5efb8dde7cd7",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        720
+      ],
+      "id": "e3dc0ac1-d63e-4009-b859-b15fa131fc00",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "dinaholuwabori@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dinaholuwabori@gmail.com"
+        },
+        "start": "={{new Date($('Message a model').item.json.output[0].content[0].text) }}",
+        "end": "={{new Date($('Message a model').item.json.output[0].content[0].text).plus({hours:1}) }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        720
+      ],
+      "id": "a23a164c-b648-40b9-9114-831bc711a72b",
+      "name": "Create an event in Google Calendar1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "dv1qFkAXxNlbbqxB",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.confirmationID }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1040,
+        720
+      ],
+      "id": "e81ea180-1fe2-41aa-97bc-5f0d4b3dfa55",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields1').item.json['Email Address'] }}",
+        "subject": "Appointment Booked With MediCare",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "MediCare Health Centre"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        448
+      ],
+      "id": "268ff2ab-1105-4d98-8473-fb3a708f25b3",
+      "name": "Send a message",
+      "webhookId": "85a4edab-ba62-4585-8c72-11dc696a10e0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "={{ $('New Email Reply Received').item.json.text }}"
+            },
+            {
+              "role": "system",
+              "content": "=You are an intelligent appointment rescheduling assistant for MediCare. Your job is to carefully read through patient email replies and extract their appointment preference with perfect accuracy.\n\n## Your Task\n\n1. Read the email text provided\n2. Identify which of the THREE pre-offered appointment options the patient has chosen\n3. If the patient wrote their own date/time instead, extract and convert it\n4. Return the result in a structured output format with zero errors\n\n## The Three Options\n\nThe patient was offered three alternative appointment slots. Look for these in the email:\n- **Option 1**: [will be provided in context]\n- **Option 2**: [will be provided in context]\n- **Option 3**: [will be provided in context]\n\nIf the patient explicitly says \"Option 1\", \"Option 2\", or \"Option 3\" — extract that choice immediately.\n\n## If Patient Wrote Their Own Date/Time\n\nIf the patient instead wrote a custom date and time (e.g., \"How about August 15th at 2:30 PM?\" or \"Let's do next Friday morning\"), you MUST:\n\n1. **Parse the date carefully** — handle all common formats:\n   - \"August 15th\" → August 15\n   - \"15th of August\" → August 15\n   - \"Aug 15\" → August 15\n   - \"next Friday\" → calculate the next Friday from today\n   - \"this Saturday\" → calculate this Saturday\n   - Any year mentioned takes precedence; if no year, assume the current year.\n\n2. **Parse the time carefully** — handle all formats:\n   - \"2:30 PM\" → 14:30\n   - \"14:30\" → 14:30\n   - \"2 in the afternoon\" → 14:00\n   - \"morning\" or \"9am\" or \"9 AM\" → 09:00\n   - If no minutes specified, assume :00\n   \n3. **Apply timezone: Africa/Lagos (West Africa Time, WAT)**\n   - All times should be converted to ISO 8601 format in WAT timezone\n   - WAT is UTC+1 (no DST)\n   - Format output as: `2026-08-15 14:30` (ISO 8601 with timezone offset)\n\n## Output Format\n\nAn ISOString format of the date and time with no text or asterick e.g 2026-08-01 13:00\n\n\n## Critical Rules\n\n1. **Zero tolerance for ambiguity**: If the date or time is even slightly unclear, set `text` to `null`. Do NOT guess.\n2. **Always use Africa/Lagos timezone** — never assume any other timezone.\n3. **Double-check the math**: If they say \"next Friday,\" verify the day of the week is actually a Friday in your calculation.\n4. **Never make up dates or times** \n\n## Example\n\n**Email text**: \"Hi, I like Option 2 from your list. Let me know if that works!\"\n\n**Your response**:\nAn ISOString format of the date and time of the option chosen with no text or asterick e.g 2026-08-01 13:00\n\n\n**Email text**: \"Can we do August 20th at 3:45 PM instead?\"\n\n**Your response**:\nAn ISOString format of the date and time with no text or asterick e.g 2026-08-01 13:00"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        448
+      ],
+      "id": "6561788c-f6aa-4130-a9b3-9b81c8a83587",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 805691668,
+          "mode": "list",
+          "cachedResultName": "Appointment Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=805691668"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Preferred Appointment Date ": "={{ $('Update Sheet- New Date From Reply').item.json['Preferred Appointment Date '] }}",
+            "confirmationID": "={{ $('Update Sheet- New Date From Reply').item.json.confirmationID }}",
+            "Status": "Appointment Booked"
+          },
+          "matchingColumns": [
+            "confirmationID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Home Address",
+              "displayName": "Home Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Preferred Appointment Date ",
+              "displayName": "Preferred Appointment Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Relevant Medical Background",
+              "displayName": "Relevant Medical Background",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "How Do You Hear About Us?",
+              "displayName": "How Do You Hear About Us?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confirmationID",
+              "displayName": "confirmationID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        448
+      ],
+      "id": "dcc2d725-e0e8-4f00-b905-a799c319ca41",
+      "name": "Update Sheet Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 805691668,
+          "mode": "list",
+          "cachedResultName": "Appointment Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=805691668"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Preferred Appointment Date ": "={{ $json.output[0].content[0].text }}",
+            "confirmationID": "={{ $('Get row(s) in sheet2').item.json.confirmationID }}"
+          },
+          "matchingColumns": [
+            "confirmationID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Home Address",
+              "displayName": "Home Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Preferred Appointment Date ",
+              "displayName": "Preferred Appointment Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Relevant Medical Background",
+              "displayName": "Relevant Medical Background",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "How Do You Hear About Us?",
+              "displayName": "How Do You Hear About Us?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confirmationID",
+              "displayName": "confirmationID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        448
+      ],
+      "id": "ec35b23f-b272-4cb2-8916-8f153df404e9",
+      "name": "Update Sheet- New Date From Reply",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2094364597,
+          "mode": "list",
+          "cachedResultName": "Confirmation Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=2094364597"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('Get row(s) in sheet2').item.json.Timestamp }}",
+            "Confirmation ID": "={{ $json.confirmationID }}",
+            "Appointment Date": "={{ $json['Preferred Appointment Date '] }}",
+            "Appointment Status": "Booked",
+            "Patient Name": "={{ $('Get row(s) in sheet2').item.json['Full Name'] }}",
+            "Patient Email Address": "={{ $('Get row(s) in sheet2').item.json['Email Address'] }}",
+            "Reason For Visit": "={{ $('Get row(s) in sheet2').item.json['Reason For Visit'] }}"
+          },
+          "matchingColumns": [
+            "Confirmation ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Confirmation ID",
+              "displayName": "Confirmation ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Email Address",
+              "displayName": "Patient Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Appointment Status",
+              "displayName": "Appointment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminder- 2 Days Before Appointment Day",
+              "displayName": "Reminder- 2 Days Before Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminder-  Appointment Day",
+              "displayName": "Reminder-  Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "d16c0de6-3c66-4417-b390-f1ce8a52618a",
+      "name": "Update Confirmation Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1568,
+        448
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2094364597,
+          "mode": "list",
+          "cachedResultName": "Confirmation Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=2094364597"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Appointment Status",
+              "lookupValue": "Booked"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        928
+      ],
+      "id": "566685f3-ad84-4fb8-be27-80fb8606f870",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 805691668,
+          "mode": "list",
+          "cachedResultName": "Appointment Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=805691668"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email Address",
+              "lookupValue": "={{ $json.from.value[0].address }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        448
+      ],
+      "id": "7277b732-d805-4af8-a24f-a023c010717e",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('New Booking Form Response').item.json['Email Address'] }}",
+        "subject": "Appointment Booked With MediCare",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "MediCare Health Centre"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1280,
+        -32
+      ],
+      "id": "7b6465a1-1efa-4556-857c-4d54d2da64f2",
+      "name": "Send a message1",
+      "webhookId": "85a4edab-ba62-4585-8c72-11dc696a10e0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 805691668,
+          "mode": "list",
+          "cachedResultName": "Appointment Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=805691668"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Preferred Appointment Date ": "={{ $('Edit Fields').item.json['Preferred Appointment Date '] }}",
+            "confirmationID": "={{ $('Edit Fields').item.json.confirmationId }}",
+            "Status": "Appointment Booked"
+          },
+          "matchingColumns": [
+            "confirmationID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Home Address",
+              "displayName": "Home Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Preferred Appointment Date ",
+              "displayName": "Preferred Appointment Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Relevant Medical Background",
+              "displayName": "Relevant Medical Background",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "How Do You Hear About Us?",
+              "displayName": "How Do You Hear About Us?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confirmationID",
+              "displayName": "confirmationID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        -32
+      ],
+      "id": "3a5c424f-49f9-4677-94c3-4799aac0fef5",
+      "name": "Update Sheet Status1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2094364597,
+          "mode": "list",
+          "cachedResultName": "Confirmation Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=2094364597"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('New Booking Form Response').item.json.Timestamp }}",
+            "Confirmation ID": "={{ $json.confirmationID }}",
+            "Appointment Date": "={{ $('New Booking Form Response').item.json['Preferred Appointment Date '] }}",
+            "Appointment Status": "Booked",
+            "Patient Name": "={{ $('New Booking Form Response').item.json['Full Name'] }}",
+            "Patient Email Address": "={{ $('New Booking Form Response').item.json['Email Address'] }}",
+            "Reason For Visit": "={{ $('New Booking Form Response').item.json['Reason For Visit'] }}"
+          },
+          "matchingColumns": [
+            "Confirmation ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Confirmation ID",
+              "displayName": "Confirmation ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Email Address",
+              "displayName": "Patient Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Appointment Status",
+              "displayName": "Appointment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminder- 2 Days Before Appointment Day",
+              "displayName": "Reminder- 2 Days Before Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminder-  Appointment Day",
+              "displayName": "Reminder-  Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "970964fc-c827-4fb8-8dba-59e01e9a30f4",
+      "name": "Update Confirmation Sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        -32
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{DateTime.fromJSDate(new Date($json['Appointment Date'])).minus({ days: 2 }).toISO()}}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        912
+      ],
+      "id": "bedd6190-48d0-460c-9c39-c6b13e1a1d88",
+      "name": "Wait",
+      "webhookId": "938db006-bbcf-4187-b1b1-5132a31740ce"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        928
+      ],
+      "id": "58ea41a0-a690-4679-adb4-7a8083247445",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Appointment Date'] }}",
+                    "rightValue": "2 days time",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9257ecaf-9cc2-4109-ac12-1302e57a9651"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Appointment in 2 days"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c5086221-a947-4e95-935c-0bae2e2e4854",
+                    "leftValue": "={{ $json['Appointment Date'] }}",
+                    "rightValue": "={{ $json['Appointment Date'] }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Appointment Day Reminder"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        928
+      ],
+      "id": "5aa7bf78-71e3-48f4-ae2e-06f64a9205ee",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{DateTime.fromJSDate(new Date($json['Appointment Date'])).minus({ hours: 5 }).toISO()}}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        1104
+      ],
+      "id": "3c486199-6ace-48e1-9e15-9c7cb143bea4",
+      "name": "Wait1",
+      "webhookId": "938db006-bbcf-4187-b1b1-5132a31740ce"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get row(s) in sheet1').item.json['Patient Email Address'] }}",
+        "subject": "=Reminder: A Reminder Of Your Appointment With MediCare ",
+        "emailType": "text",
+        "message": "=Hi {{ $('Get row(s) in sheet1').item.json['Patient Name'] }},Just to remind you of your appointment With MediCare in 2 days time on {{ $('Get row(s) in sheet1').item.json['Appointment Date'] }}. See you then!",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "MediCare Health Center"
+        }
+      },
+      "id": "73913911-6326-4fd5-ae83-da31b8cf5bb0",
+      "name": "Send Reminder Email 2 days to appointment",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        912
+      ],
+      "webhookId": "3bc9c7d0-c9fd-45ec-a4ce-4e5c5e1293ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get row(s) in sheet1').item.json['Patient Email Address'] }}",
+        "subject": "Reminder: A Reminder Of Your Appointment With MediCare ",
+        "emailType": "text",
+        "message": "=Hi {{ $('Get row(s) in sheet1').item.json['Patient Name'] }},Just to remind you of your appointment With MediCare today {{ $('Get row(s) in sheet1').item.json['Appointment Date'] }}. See you soon!",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "MediCare Health Center"
+        }
+      },
+      "id": "9b6eb318-a245-4cb6-bed7-d07594ae8f64",
+      "name": "Send Reminder Email on Appointment Day",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        1104
+      ],
+      "webhookId": "3bc9c7d0-c9fd-45ec-a4ce-4e5c5e1293ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2094364597,
+          "mode": "list",
+          "cachedResultName": "Confirmation Form Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit#gid=2094364597"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reminder- 2 Days Before Appointment Day": "Reminder Email Sent"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Confirmation ID",
+              "displayName": "Confirmation ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patient Email Address",
+              "displayName": "Patient Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Appointment Status",
+              "displayName": "Appointment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reminder- 2 Days Before Appointment Day",
+              "displayName": "Reminder- 2 Days Before Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reminder-  Appointment Day",
+              "displayName": "Reminder-  Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        912
+      ],
+      "id": "3eddb331-22a7-4bcf-af68-a16e1ef0b5df",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78",
+          "mode": "list",
+          "cachedResultName": "MediCare Appointment Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LssJ9x5DpGWWCuGZy92qXsK-khGRUNITqgj3EYP6_78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "=2094364597",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reminder- 2 Days Before Appointment Day": "",
+            "Patient Name": "={{ $('Get row(s) in sheet1').item.json['Patient Name'] }}",
+            "Reminder-  Appointment Day": "Reminder Email Sent"
+          },
+          "matchingColumns": [
+            "Patient Name"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Confirmation ID",
+              "displayName": "Confirmation ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Email Address",
+              "displayName": "Patient Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Appointment Status",
+              "displayName": "Appointment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason For Visit",
+              "displayName": "Reason For Visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reminder- 2 Days Before Appointment Day",
+              "displayName": "Reminder- 2 Days Before Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reminder-  Appointment Day",
+              "displayName": "Reminder-  Appointment Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        1104
+      ],
+      "id": "c2e51c4b-3702-4109-aba0-5df91ec866c0",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "New Booking Form Response": [
+      {
+        "json": {
+          "Timestamp": "7/29/2026 2:22:19",
+          "Full Name": "Sam Dave",
+          "Email Address": "prettydinah4@gmail.com",
+          "Phone Number": "08134562789",
+          "Age": 34,
+          "Home Address": "4, F. M. W. H Estate, Asa-dam",
+          "Preferred Appointment Date ": "8/3/2026 12:00:00",
+          "Reason For Visit": "For Consultation ",
+          "Relevant Medical Background": "",
+          "How Do You Hear About Us?": "Friend",
+          "confirmationID": "MC-9236",
+          "Status": "Appointment Booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Message a model": [
+      {
+        "json": {
+          "output": [
+            {
+              "id": "msg_0dd095fe52f0e6e0006a695bbab12081a18bd138265f1d60a0",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "2026-08-03 14:00"
+                }
+              ],
+              "role": "assistant"
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "New Booking Form Response": {
+      "main": [
+        [
+          {
+            "node": "Generate Unique Confirmation ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Unique Confirmation ID": {
+      "main": [
+        [
+          {
+            "node": "Write Confirmation ID Back to Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Confirmation ID Back to Row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is There a Conflict?": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send: Conflict - Pick New Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send: Conflict - Pick New Date": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet: Awaiting New Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Email Reply Received": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Is There a Conflict?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet- New Date From Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet- New Date From Reply": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet Status": {
+      "main": [
+        [
+          {
+            "node": "Update Confirmation Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Confirmation Sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet Status1": {
+      "main": [
+        [
+          {
+            "node": "Update Confirmation Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder Email 2 days to appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder Email on Appointment Day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder Email 2 days to appointment": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder Email on Appointment Day": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2372b24d-9dc0-48ab-a560-51098fcecd8c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6cc9ab3580f3f022a1538c0fb6e28622179839b1e47313564949f75a1eb6410d"
+  },
+  "nodeGroups": [],
+  "id": "yYpVQG8NAaaaSIHe",
+  "tags": []
+}
