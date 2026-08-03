@@ -1,0 +1,220 @@
+{
+  "name": "Email Agent- My Telegram Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "You are Dee's Email Agent. You have three tools: (1) Lookup Contact, which searches her contact database (a Google Sheet with columns like Name, Email, Notes) by name, (2) Search Gmail, which finds past emails to/from a given email address, and (3) Send Email via Gmail. Workflow: if asked to email someone by name, ALWAYS use Lookup Contact first to find their email address before sending or searching. If asked what you've received from someone, use Lookup Contact to get their email, then Search Gmail filtered by that address, and summarize the relevant messages (sender, subject, date, brief gist) rather than dumping raw content. Before sending an email, briefly confirm recipient and subject if they weren't explicitly given."
+        }
+      },
+      "id": "2e42bc51-9051-4745-bbcf-4be8e8ced0bf",
+      "name": "Email Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        160,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "id": "7fa7f0fe-e42c-4487-a179-5ee48ecb2451",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        144
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI('emailAddress', 'recipient email address') }}",
+        "subject": "={{ $fromAI('subject') }}",
+        "emailType": "text",
+        "message": "={{ $fromAI('emailBody') }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Dinah"
+        }
+      },
+      "id": "e2d95a5d-b055-496f-aa85-44b50e9ec986",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        144
+      ],
+      "webhookId": "4ab6c167-2829-438a-bfb5-fac1e0fc80cf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -48
+      ],
+      "id": "156fb1fc-872b-40b3-b8ea-bb52aa770c36",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\", \"the limit of the messages\") }}",
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "id": "c2f5cfe8-5c5f-4046-b382-ba712fb694a6",
+      "name": "Get Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        352,
+        144
+      ],
+      "webhookId": "4ab6c167-2829-438a-bfb5-fac1e0fc80cf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f64d473-e7b2-4e4e-9591-fd9a9e970cc0",
+              "name": "Response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        -48
+      ],
+      "id": "deee1887-e70d-4572-a0fc-82d8c3c4c567",
+      "name": "Response"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "send a mail to Dee Carson (prettydinah4@gmail.com) reminding her of tomorrow's meeting by 2:00p.m"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "01b5e34d-f03a-413b-8687-0620c583c9ee",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6cc9ab3580f3f022a1538c0fb6e28622179839b1e47313564949f75a1eb6410d"
+  },
+  "nodeGroups": [],
+  "id": "X7dPJ0TtJRNNSiM5",
+  "tags": []
+}
