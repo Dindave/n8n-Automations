@@ -1,0 +1,3742 @@
+{
+  "name": "4- Lead Qualifier",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Generate Leads",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is the search term?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Location/city you want to search",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dfcfa7ff-a2f0-43f7-9efc-bfbeb609c04b",
+      "name": "On form submission",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        16,
+        0
+      ],
+      "webhookId": "e7bb79f9-8367-4559-9416-fc990ac0c93b"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept ",
+              "value": "=application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_9JFWarnFCjSUBP34CccDXQfyDuy25a1PWsBC"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"includeWebResults\": false,\n    \"language\": \"en\",\n    \"locationQuery\": \"{{ $json['Location/city you want to search'] }}\",\n    \"maxCrawledPlacesPerSearch\": 5,\n    \"maximumLeadsEnrichmentRecords\": 0,\n    \"scrapeContacts\": true,\n    \"scrapeDirectories\": false,\n    \"scrapeImageAuthors\": false,\n    \"scrapePlaceDetailPage\": true,\n    \"scrapeReviewsPersonalData\": false,\n    \"scrapeSocialMediaProfiles\": {\n        \"facebooks\": true,\n        \"instagrams\": true,\n        \"tiktoks\": true,\n        \"twitters\": true,\n        \"youtubes\": true\n    },\n    \"scrapeTableReservationProvider\": false,\n    \"searchStringsArray\": [\n        \"{{ $json['What is the search term?'] }}\"\n    ],\n    \"skipClosedPlaces\": false\n}",
+        "options": {}
+      },
+      "id": "20648192-a8f4-425f-8ed5-df69421141f0",
+      "name": "Scrape Maps",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE",
+          "mode": "list",
+          "cachedResultName": "AI Lead Gen ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 831782417,
+          "mode": "list",
+          "cachedResultName": "Hospital Leads in Los Angeles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit#gid=831782417"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Category": "={{ $json.categoryName }}",
+            "Date": "={{ $json.scrapedAt }}",
+            "Reviews": "={{ $json.reviewsDistribution }}",
+            "Phone": "={{ $json.phone }}",
+            "Rating": "={{ $json.totalScore }}",
+            "Website ": "={{ $json.website }}",
+            "Street": "={{ $json.address }}",
+            "City": "={{ $json.city }}",
+            "State": "={{ $json.state }}",
+            "Title": "={{ $json.title }}",
+            "Email": "={{ $json.emails }}",
+            "Linkedin": "={{ $json.linkedIns[0] }}",
+            "Instagram": "={{ $json.instagrams[0] }}",
+            "Youtube": "={{ $json.youtubes[0] }}",
+            "Facebook": "={{ $json.facebooks[0] }}",
+            "Tiktok": "={{ $json.tiktoks }}"
+          },
+          "matchingColumns": [
+            "Date"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Street",
+              "displayName": "Street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website ",
+              "displayName": "Website ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Linkedin",
+              "displayName": "Linkedin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tiktok",
+              "displayName": "Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "70e9bcda-56da-4b6f-8fcd-1b78ce1955ac",
+      "name": "Get Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        0
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "328b7369-7d47-48b3-b76c-de5e195694f1",
+              "leftValue": "={{ $json.Rating }}",
+              "rightValue": 3.5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6ed57f43-6f5b-40f6-ae0d-bf3090101fee",
+      "name": "Keep Top Leads",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE",
+          "mode": "list",
+          "cachedResultName": "AI Lead Gen ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 693288536,
+          "mode": "list",
+          "cachedResultName": "Top Hospital Leads in Los Angeles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit#gid=693288536"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2728d53e-b48e-4989-9d79-79a0a1a31e9c",
+      "name": "Get Total Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        0
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4750654b-5c74-4027-a297-bb29c9c44299",
+              "leftValue": "={{ $json['Website '] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1aa23721-16a2-4702-a36c-90d87b64d90f",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "009abad9-f59a-4b5e-8883-9e52652d920c",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1056,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer fc-22e7114a4ac54eb98f26084f47d7efb6"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json['Website '] }}\",\n  \"formats\": [\n    \"markdown\",\n    \"html\"\n  ]\n}",
+        "options": {}
+      },
+      "id": "d25f905c-e13a-4bc5-aaf5-a9fc31ea1472",
+      "name": "Scrape Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1200,
+        176
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Random delay between 1-5 seconds\nconst min = 1;\nconst max = 5;\nconst delaySeconds = Math.floor(Math.random() * (max - min + 1)) + min;\nconst delayMs = delaySeconds * 1000;\n\nawait new Promise(resolve => setTimeout(resolve, delayMs));\n\nconst items = $input.all();\n\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    delaySeconds: delaySeconds\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        176
+      ],
+      "id": "e6e9832c-b255-418f-8e4c-df65e998b6ec",
+      "name": "Random Delay"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.delaySeconds }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        192
+      ],
+      "id": "2e0eff40-e378-4846-938e-2d796e041c06",
+      "name": "Wait",
+      "webhookId": "56b5d86b-8d5c-42bf-a83f-0530cb01d5f4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE",
+          "mode": "list",
+          "cachedResultName": "AI Lead Gen ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 693288536,
+          "mode": "list",
+          "cachedResultName": "Top Hospital Leads in Los Angeles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit#gid=693288536"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Website ": "={{ $('Loop Over Items').item.json['Website '] }}",
+            "Email": "={{ $('Scrape Info From Website').item.json.email }}",
+            "Facebook": "={{ $('Scrape Info From Website').item.json.facebook }}",
+            "Linkedin": "={{ $('Random Delay').item.json.linkedin }}",
+            "Tiktok": "={{ $('Random Delay').item.json.tiktok }}",
+            "Youtube": "={{ $('Random Delay').item.json.youtube }}",
+            "Instagram": "={{ $('Random Delay').item.json.instagram }}"
+          },
+          "matchingColumns": [
+            "Website "
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Street",
+              "displayName": "Street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website ",
+              "displayName": "Website ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Linkedin",
+              "displayName": "Linkedin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tiktok",
+              "displayName": "Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1712,
+        192
+      ],
+      "id": "71110cb8-30bd-44b4-ac1a-ca62ad0a639d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE",
+          "mode": "list",
+          "cachedResultName": "AI Lead Gen ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 693288536,
+          "mode": "list",
+          "cachedResultName": "Top Hospital Leads in Los Angeles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uvesyhOsVBOPjDhYv_fCIBuFSwmQ0eTzmRbkqkQIyhE/edit#gid=693288536"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Category": "={{ $json.Category }}",
+            "Date": "={{ $json.Date }}",
+            "Title": "={{ $json.Title }}",
+            "State": "={{ $json.State }}",
+            "City": "={{ $json.City }}",
+            "Street": "={{ $json.Street }}",
+            "Website ": "={{ $json['Website '] }}",
+            "Phone": "={{ $json.Phone }}",
+            "Rating": "={{ $json.Rating }}",
+            "Reviews": "={{ $json.Reviews }}",
+            "Email": "={{ $json.Email }}",
+            "Facebook": "={{ $json.Facebook }}",
+            "Linkedin": "={{ $json.Linkedin }}",
+            "Youtube": "={{ $json.Youtube }}",
+            "Tiktok": "={{ $json.Tiktok }}",
+            "Instagram": "={{ $json.Instagram }}"
+          },
+          "matchingColumns": [
+            "Category"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Street",
+              "displayName": "Street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website ",
+              "displayName": "Website ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Linkedin",
+              "displayName": "Linkedin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tiktok",
+              "displayName": "Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        0
+      ],
+      "id": "cf7d8f2c-2de0-4eee-bb8c-0c0fcd2589eb",
+      "name": "SSave Top Leads",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $(\"Scrape Website\").all();\n\nconst results = items.map(item => {\n  // Firecrawl nests content under `data` — check both nested and flat paths\n  const markdownText = item.json.data?.markdown || item.json.markdown || '';\n  const htmlText = item.json.data?.html || item.json.html || '';\n  const text = markdownText + '\\n' + htmlText;\n\n  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g;\n  const emailsFound = text.match(emailRegex) || [];\n  const emails = [...new Set(\n    emailsFound.filter(e => !/\\.(png|jpg|jpeg|gif|svg|webp|css|js)$/i.test(e))\n  )];\n\n  const socialPatterns = {\n    facebook: /https?:\\/\\/(www\\.)?facebook\\.com\\/[a-zA-Z0-9_.\\-/]+/gi,\n    x: /https?:\\/\\/(www\\.)?(twitter|x)\\.com\\/[a-zA-Z0-9_.\\-/]+/gi,\n    youtube: /https?:\\/\\/(www\\.)?youtube\\.com\\/[a-zA-Z0-9_.\\-/@]+/gi,\n    linkedin: /https?:\\/\\/(www\\.)?linkedin\\.com\\/[a-zA-Z0-9_.\\-/]+/gi,\n    tiktok: /https?:\\/\\/(www\\.)?tiktok\\.com\\/[a-zA-Z0-9_.\\-/@]+/gi,\n    instagram: /https?:\\/\\/(www\\.)?instagram\\.com\\/[a-zA-Z0-9_.\\-/]+/gi,\n  };\n\n  const social = {};\n  for (const [platform, regex] of Object.entries(socialPatterns)) {\n    const matches = text.match(regex) || [];\n    const cleaned = [...new Set(\n      matches.map(url => url.replace(/[),.]+$/, '').replace(/\\/$/, ''))\n    )];\n    social[platform] = cleaned[0] || null;\n  }\n\n  return {\n    json: {\n      sourceUrl: item.json.data?.metadata?.sourceURL || item.json.url || null,\n      email: emails[0] || null,\n      allEmails: emails,\n      facebook: social.facebook,\n      x: social.x,\n      youtube: social.youtube,\n      linkedin: social.linkedin,\n      tiktok: social.tiktok,\n      instagram: social.instagram,\n    }\n  };\n});\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        176
+      ],
+      "id": "3064c83c-06da-477a-98d2-ba86805b4491",
+      "name": "Scrape Info From Website"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1248,
+        -144
+      ],
+      "id": "ac5f2ca2-8e8f-4da8-8605-55424d098336",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1488,
+        -128
+      ],
+      "id": "9b3fe7e6-b648-4fac-9249-186b57095529",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        32
+      ],
+      "id": "78af68e6-789c-4188-a487-25aac39f1214",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        -288
+      ],
+      "id": "b3ac03db-4a36-4c88-ac59-bd7e48428436",
+      "name": "Send a message",
+      "webhookId": "53dbe81a-1a7c-47a8-9bae-fcf5c3027605",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Scrape Maps": [
+      {
+        "json": {
+          "title": "UCLA West Valley Medical Center",
+          "subTitle": null,
+          "description": null,
+          "price": null,
+          "categoryName": "Medical Center",
+          "address": "7300 Medical Center Dr, West Hills, CA 91307",
+          "neighborhood": "West Hills",
+          "street": "7300 Medical Center Dr",
+          "city": "West Hills",
+          "postalCode": "91307",
+          "state": "California",
+          "countryCode": "US",
+          "website": "https://www.uclahealth.org/hospitals/west-valley",
+          "phone": "(818) 676-4000",
+          "phoneUnformatted": "+18186764000",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 34.2028189,
+            "lng": -118.6287815
+          },
+          "locatedIn": "UCLA West Valley Medical Center Emergency Room",
+          "floor": "Floor 1",
+          "plusCode": "693C+4F West Hills, Los Angeles, CA",
+          "menu": null,
+          "servicesLink": null,
+          "totalScore": 4.1,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJmcgprrOdwoARy9-7nHbZBtY",
+          "categories": [
+            "Medical Center"
+          ],
+          "fid": "0x80c29db3ae29c899:0xd606d9769cbbdfcb",
+          "cid": "15422253077435768779",
+          "reviewsCount": 2669,
+          "imagesCount": 104,
+          "imageCategories": [
+            "All",
+            "By owner",
+            "Street View & 360°"
+          ],
+          "scrapedAt": "2026-07-30T23:09:12.805Z",
+          "reserveTableUrl": null,
+          "googleFoodUrl": null,
+          "hotelStars": null,
+          "hotelDescription": null,
+          "checkInDate": null,
+          "checkOutDate": null,
+          "hotelAds": [],
+          "popularTimesLiveText": null,
+          "popularTimesLivePercent": null,
+          "popularTimesHistogram": {},
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Thursday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Friday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "additionalOpeningHours": {
+            "UCLA West Valley Medical Center Emergency Room": [
+              {
+                "day": "Monday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Friday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Open 24 hours"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [
+            {
+              "category": "People also search for",
+              "title": "UCLA Health West Hills Primary & Specialty Care",
+              "reviewsCount": 13,
+              "totalScore": 2.5
+            },
+            {
+              "category": "People also search for",
+              "title": "UCLA West Hills Emergency Room Ambulance Entrance",
+              "reviewsCount": 4,
+              "totalScore": 1.3
+            },
+            {
+              "category": "People also search for",
+              "title": "Oak Hills Medical Plaza",
+              "reviewsCount": 2,
+              "totalScore": 5
+            },
+            {
+              "category": "People also search for",
+              "title": "West Valley Medical Center",
+              "reviewsCount": 3,
+              "totalScore": 2.3
+            },
+            {
+              "category": "People also search for",
+              "title": "Encino Hospital Medical Center",
+              "reviewsCount": 408,
+              "totalScore": 3.7
+            }
+          ],
+          "placesTags": [
+            {
+              "title": "Shopping",
+              "count": 1
+            },
+            {
+              "title": "Recreations",
+              "count": 1
+            },
+            {
+              "title": "Health & Beauty",
+              "count": 25
+            },
+            {
+              "title": "Other",
+              "count": 3
+            }
+          ],
+          "reviewsTags": [
+            {
+              "title": "emergency room",
+              "count": 207
+            },
+            {
+              "title": "mammogram",
+              "count": 45
+            },
+            {
+              "title": "wait time",
+              "count": 154
+            },
+            {
+              "title": "ct scan",
+              "count": 31
+            },
+            {
+              "title": "surgery",
+              "count": 124
+            },
+            {
+              "title": "caring staff",
+              "count": 154
+            },
+            {
+              "title": "blood work",
+              "count": 30
+            },
+            {
+              "title": "anesthesiologist",
+              "count": 15
+            },
+            {
+              "title": "pain management",
+              "count": 53
+            },
+            {
+              "title": "outpatient surgery",
+              "count": 15
+            }
+          ],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Onsite services": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible parking lot": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Gender-neutral restroom": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Planning": [
+              {
+                "Appointment required": true
+              },
+              {
+                "Appointments recommended": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=UCLA%20West%20Valley%20Medical%20Center&query_place_id=ChIJmcgprrOdwoARy9-7nHbZBtY",
+          "searchPageUrl": "https://www.google.com/maps/search/Hospital/@34.055185398993856,-118.6163245590756,13z?hl=en",
+          "searchString": "Hospital",
+          "language": "en",
+          "rank": 9,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnKcNvkrltoEU75xVdpKTLWR3kEW5iCDwDuLyRozO7vR5uNXnJka1NdlMfZSp4pa-02smnINjQIai6fOASDYXWX4Z-JZ4mVt6CU8fPHN9mE5hvok4QCo-MkbPBrdF3X5F4LUQZ2=w426-h240-k-no",
+          "kgmid": "/g/1tcvv368",
+          "reviewsDistribution": {
+            "oneStar": 414,
+            "twoStar": 98,
+            "threeStar": 109,
+            "fourStar": 277,
+            "fiveStar": 1771
+          },
+          "questionsAndAnswers": [],
+          "updatesFromCustomers": {
+            "text": "Work done",
+            "language": "en",
+            "postDate": "2 years ago",
+            "postedBy": {
+              "name": "Rebeca Tzunun",
+              "url": "https://www.google.com/maps/contrib/106131838437894563774?hl=en-US",
+              "title": null,
+              "totalReviews": 0
+            },
+            "media": [
+              {
+                "link": "https://lh3.googleusercontent.com/grass-cs/ACvplmMCdGHAURHea29XeHuclFSMcA1mc4hUlUS7WFpkVXqcVpUYiydIa0K19GH8aa7Hf83_7KCQDZdmKxxvSvjhNV-vhd4uOY_pThg86vZVfPFt_M02KhxJKcccA4xwxqbed2BL1OklDg=k-no",
+                "postDate": "2 years ago"
+              },
+              {
+                "link": "https://lh3.googleusercontent.com/grass-cs/ACvplmPBxgXQ0XfK-HWhUvINE18ylGN86FlVIcokLVO7YjqGN26yKWxEFe0us76pxl_Umd_Qr9sQCuOiclDNKLfcOGW_Lef4GVtQPYS4lDcPMoGvDZ0yYECLKGrCeOZC6jhwN0sAFst6=k-no",
+                "postDate": "2 years ago"
+              }
+            ]
+          },
+          "webResults": [],
+          "tableReservationLinks": [],
+          "tableReservationProviders": [],
+          "bookingLinks": [],
+          "restaurantData": {
+            "tableReservationProvider": null
+          },
+          "ownerUpdates": [],
+          "emails": [],
+          "phones": [
+            "18186764000",
+            "18182269151",
+            "18186764114",
+            "18186764119",
+            "18186764123",
+            "18186764133",
+            "18186764146",
+            "18186764266",
+            "18186764600",
+            "18186764700",
+            "18186764999",
+            "18554226625",
+            "310-825-6021",
+            "3103018860",
+            "855-364-7052",
+            "13102860122",
+            "13103130020",
+            "13103170034",
+            "13108273700",
+            "13109378555",
+            "16612535851",
+            "13103158900",
+            "13108284530",
+            "18053700040",
+            "18185562700",
+            "13102066232",
+            "18186100292",
+            "13102678000",
+            "13102678180",
+            "13102679113",
+            "13102679325",
+            "13102679522",
+            "13103018860",
+            "13107941400",
+            "13108252111",
+            "13108256021",
+            "13108259111",
+            "13102679440",
+            "13107948759",
+            "13108258021",
+            "13108258325",
+            "14242596000",
+            "14242596611",
+            "14242598045",
+            "14242598180",
+            "14242598250",
+            "14242598400",
+            "14242599120",
+            "14242599922",
+            "+18186764172"
+          ],
+          "phonesUncertain": [
+            "818-676-4000",
+            "310-301-8860",
+            "310-825-6021",
+            "818-226-9151",
+            "818-676-4114",
+            "818-676-4119",
+            "818-676-4123",
+            "818-676-4133",
+            "818-676-4146",
+            "818-676-4266",
+            "818-676-4600",
+            "818-676-4700",
+            "818-676-4999",
+            "855-364-7052",
+            "855-422-6625",
+            "310-286-0122",
+            "310-313-0020",
+            "310-317-0034",
+            "310-827-3700",
+            "310-937-8555",
+            "661-253-5851",
+            "310-315-8900",
+            "310-828-4530",
+            "805-370-0040",
+            "818-556-2700",
+            "310-206-6232",
+            "818-610-0292",
+            "310-267-8000",
+            "310-267-8180",
+            "310-267-9113",
+            "310-267-9522",
+            "310-794-1400",
+            "310-825-2111",
+            "310-825-9111",
+            "310-267-9440",
+            "310-794-8759",
+            "310-825-8021",
+            "310-825-8325",
+            "424-259-6000",
+            "424-259-6611",
+            "424-259-8045",
+            "424-259-8180",
+            "424-259-8400",
+            "424-259-9120",
+            "424-259-9922",
+            "800-367-1500",
+            "818-676-4168",
+            "818-676-4172",
+            "818-676-4745",
+            "855-337-9915"
+          ],
+          "linkedIns": [
+            "https://linkedin.com/company/ucla-health",
+            "https://www.linkedin.com/company/ucla-health"
+          ],
+          "twitters": [
+            "https://x.com/uclahealth"
+          ],
+          "instagrams": [
+            "https://instagram.com/uclahealth",
+            "https://www.instagram.com/uclahealth"
+          ],
+          "facebooks": [
+            "https://www.facebook.com/uclahealth"
+          ],
+          "youtubes": [
+            "https://youtube.com/ucla-health",
+            "youtu.be/Hsnw7rRP1Kw",
+            "https://www.youtube.com/user/uclahealth"
+          ],
+          "tiktoks": [],
+          "pinterests": [],
+          "discords": [],
+          "facebookProfiles": [
+            {
+              "profileName": "UCLA Health",
+              "profilePictureURL": "https://scontent-iad3-2.xx.fbcdn.net/v/t39.30808-1/558267197_782657251144823_5127782219032533571_n.jpg?stp=dst-jpg_tt6&cstp=mx800x800&ctp=s200x200&_nc_cat=103&ccb=1-7&_nc_sid=f907e8&_nc_ohc=rLJdrQ-miCUQ7kNvwGUyWlN&_nc_oc=AdouJuAM8-KFaK3U_6ylxEDnAbQeRY2q1YVBJwDZwiCaVEM_6Rf4LR8FdQAxZ74KF8WKrj4shrHM2X_IlPPQBGxW&_nc_zt=24&_nc_ht=scontent-iad3-2.xx&_nc_gid=f29I7wD4z7Ed2N8zMh4_Cw&_nc_ss=72289&oh=00_AQEBvlxvX9JWOcZyB0E2OwnLWZWAVwdicUev2qmcH5Ld8Q&oe=6A719573",
+              "description": "",
+              "username": "uclahealth",
+              "location": null,
+              "followersCount": 300396,
+              "externalProfileURL": "https://www.uclahealth.org/",
+              "profileURL": "https://www.facebook.com/uclahealth",
+              "creationDate": "March 11, 2009",
+              "coverPhoto": "https://scontent-iad6-1.xx.fbcdn.net/v/t39.30808-6/558908137_782672471143301_3408215948505454298_n.jpg?stp=dst-jpg_tt6&cstp=mx3319x1263&ctp=s960x960&_nc_cat=100&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=HRUCvI2vxRoQ7kNvwFqIIj7&_nc_oc=AdpgoHK-i5K_i3BzUl1K2lh0KKXFSCwEL6GpDr1PuxjxbwaJxMa2cAqDJI0lkgDlqRsoH-k24nKOmBx_heiUwamw&_nc_zt=23&_nc_ht=scontent-iad6-1.xx&_nc_gid=re8znwG9YD9haW_23x70PQ&_nc_ss=72289&oh=00_AQEh5cfTPNSw_yOSiy4ATt0PLFXVB03964Skrh7IaV7dKw&oe=6A71BD9F",
+              "socialInputUrl": "https://www.facebook.com/uclahealth",
+              "startUrl": "https://www.facebook.com/uclahealth",
+              "info": [
+                "UCLA Health. 300,396 likes",
+                "318 talking about this",
+                "20,322 were here. To learn more about UCLA Health please visit http://www.uclahealth.org."
+              ],
+              "likes": 300396,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Nonprofit organization"
+              ],
+              "adStatus": "This Page is currently running ads.",
+              "facebookId": "100082016650976",
+              "phone": "+1 310-825-2631",
+              "email": "contactuclahealth@mednet.ucla.edu",
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            }
+          ],
+          "instagramProfiles": [
+            {
+              "profileName": "UCLA Health",
+              "profilePictureURL": "https://scontent-waw2-2.cdninstagram.com/v/t51.82787-19/557295585_18538452352059387_5184107244024659201_n.jpg?stp=dst-jpg_e0_s150x150_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4zMjAuYzIifQ&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_cat=103&_nc_oc=Q6cZ2gGcmm7lpvJugM0ar7aYQ4zMpUBDIhN3niNGbQyxGwOMV0eLgAAYy_IDXHcCf8fb5kg&_nc_ohc=B199dUy3tu0Q7kNvwFbYMvz&_nc_gid=99cfa1RVvf5LoKaodPy6_w&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AQH9jDcdp-_3LEZCdzCH7LsmpctabL6cOTGiW2CuZn3v4Q&oe=6A71BD40&_nc_sid=8b3546",
+              "description": "Ranked as one of America's top hospitals, UCLA Health provides the best care at more than 290 locations throughout Southern California #BestHospitals",
+              "username": "uclahealth",
+              "followersCount": 73623,
+              "followingCount": 654,
+              "externalProfileURL": "https://www.instagram.com/uclahealth",
+              "profileURL": "https://www.instagram.com/uclahealth",
+              "privateProfile": false,
+              "accountVerificationStatus": true,
+              "socialInputUrl": "https://www.instagram.com/uclahealth",
+              "startUrl": "https://www.instagram.com/uclahealth",
+              "highlightReelCount": 14,
+              "igtvVideoCount": 60,
+              "isBusinessAccount": true,
+              "postsCount": 4478,
+              "accountId": "268219386",
+              "coverPhoto": null,
+              "location": null,
+              "creationDate": null
+            }
+          ],
+          "tiktokProfiles": [],
+          "twitterProfiles": [
+            {
+              "profileName": "UCLA Health",
+              "profilePictureURL": "https://pbs.twimg.com/profile_images/1973436961819074565/v9WLo_5v_normal.jpg",
+              "description": "Ranked as one of America's top hospitals and providing the best care at more than 290 locations throughout So Cal. Official UCLA Health account. #BestHospitals",
+              "username": "UCLAHealth",
+              "followersCount": 46243,
+              "followingCount": 4184,
+              "location": "Los Angeles, CA",
+              "profileURL": "https://x.com/UCLAHealth",
+              "creationDate": "Fri Mar 27 10:39:19 +0000 2009",
+              "privateProfile": false,
+              "accountVerificationStatus": true,
+              "coverPhoto": "https://pbs.twimg.com/profile_banners/26982121/1759338586",
+              "socialInputUrl": "https://www.twitter.com/uclahealth",
+              "startUrl": "https://www.twitter.com/uclahealth",
+              "mediaCount": 6602,
+              "id": "26982121",
+              "isBlueVerified": true,
+              "externalProfileURL": null
+            }
+          ],
+          "youtubeProfiles": [
+            {
+              "profileName": "UCLA Health",
+              "profilePictureURL": "https://yt3.googleusercontent.com/5tveVcmG-dgmBPL9zojxYUZsHNqcTB5m_W9ihSTDLH56L6TqTkW4zMCGk53SThKs__pYsFFKv-8=s68-c-k-c0x00ffffff-no-rj",
+              "location": "United States",
+              "description": "For more than half a century, UCLA Health System has provided the best in healthcare and the latest in medical technology to the people of Los Angeles and throughout the world. \n\nComprised of Ronald Reagan UCLA Medical Center, UCLA Medical Center, Santa Monica, Resnick Neuropsychiatric Hospital at UCLA, UCLA Mattel Children's Hospital, and the UCLA Medical Group with its wide-reaching system of primary-care and specialty-care offices throughout the region, UCLA Health System is among the most comprehensive and advanced healthcare systems in the world. Visit us at www.uclahealth.org",
+              "followersCount": 580000,
+              "externalProfileURL": "https://www.youtube.com/channel/UCb_JYhqnSdEejiznUm3XNqQ",
+              "profileURL": "https://www.youtube.com/channel/UCb_JYhqnSdEejiznUm3XNqQ",
+              "creationDate": "Sep 26, 2007",
+              "coverPhoto": "https://yt3.googleusercontent.com/PgZiqd7Qv1ZW_r0GRgW0RiQt6hfcbsiVCPjobO6JQCKejo99KU7kxGzwDnf0RHbktydRDqAFpv8=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+              "accountVerificationStatus": true,
+              "socialInputUrl": "https://youtube.com/ucla-health",
+              "startUrl": "https://youtube.com/ucla-health",
+              "channelTotalVideos": 3094,
+              "channelTotalViews": 134337247,
+              "isAgeRestricted": false,
+              "id": "UCb_JYhqnSdEejiznUm3XNqQ",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            },
+            {
+              "profileName": "UCLA Health",
+              "followersCount": 580000,
+              "externalProfileURL": "https://www.youtube.com/@UCLAHealth",
+              "profileURL": "https://www.youtube.com/@UCLAHealth",
+              "id": "UCb_JYhqnSdEejiznUm3XNqQ",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            },
+            {
+              "profileName": "UCLA Health",
+              "profilePictureURL": "https://yt3.googleusercontent.com/5tveVcmG-dgmBPL9zojxYUZsHNqcTB5m_W9ihSTDLH56L6TqTkW4zMCGk53SThKs__pYsFFKv-8=s68-c-k-c0x00ffffff-no-rj",
+              "location": "United States",
+              "description": "For more than half a century, UCLA Health System has provided the best in healthcare and the latest in medical technology to the people of Los Angeles and throughout the world. \n\nComprised of Ronald Reagan UCLA Medical Center, UCLA Medical Center, Santa Monica, Resnick Neuropsychiatric Hospital at UCLA, UCLA Mattel Children's Hospital, and the UCLA Medical Group with its wide-reaching system of primary-care and specialty-care offices throughout the region, UCLA Health System is among the most comprehensive and advanced healthcare systems in the world. Visit us at www.uclahealth.org",
+              "followersCount": 580000,
+              "externalProfileURL": "https://www.youtube.com/channel/UCb_JYhqnSdEejiznUm3XNqQ",
+              "profileURL": "https://www.youtube.com/channel/UCb_JYhqnSdEejiznUm3XNqQ",
+              "creationDate": "Sep 26, 2007",
+              "coverPhoto": "https://yt3.googleusercontent.com/PgZiqd7Qv1ZW_r0GRgW0RiQt6hfcbsiVCPjobO6JQCKejo99KU7kxGzwDnf0RHbktydRDqAFpv8=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+              "accountVerificationStatus": true,
+              "socialInputUrl": "https://www.youtube.com/user/uclahealth",
+              "startUrl": "https://www.youtube.com/user/uclahealth",
+              "channelTotalVideos": 3094,
+              "channelTotalViews": 134337247,
+              "isAgeRestricted": false,
+              "id": "UCb_JYhqnSdEejiznUm3XNqQ",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            }
+          ],
+          "domain": "uclahealth.org",
+          "imageUrls": [],
+          "reviews": [],
+          "leadsEnrichment": []
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "title": "Dignity Health - Northridge Hospital Medical Center",
+          "subTitle": null,
+          "description": null,
+          "price": null,
+          "categoryName": "Medical Center",
+          "address": "18300 Roscoe Blvd, Northridge, CA 91325",
+          "neighborhood": "Northridge",
+          "street": "18300 Roscoe Blvd",
+          "city": "Northridge",
+          "postalCode": "91325",
+          "state": "California",
+          "countryCode": "US",
+          "website": "https://www.commonspirit.org/find-a-location/dignity-health-northridge-hospital-medical-center-1381",
+          "phone": "(818) 885-8500",
+          "phoneUnformatted": "+18188858500",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 34.2201753,
+            "lng": -118.5335837
+          },
+          "locatedIn": "Emergency Room - Dignity Health - Northridge Hospital Medical Center",
+          "floor": "Floors 1 and 3",
+          "plusCode": "6FC8+3H Northridge, Los Angeles, CA",
+          "menu": null,
+          "servicesLink": null,
+          "totalScore": 4.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJzeSMrEqawoARVC8c1t3NZOs",
+          "categories": [
+            "Medical Center"
+          ],
+          "fid": "0x80c29a4aac8ce4cd:0xeb64cdddd61c2f54",
+          "cid": "16961908449247768404",
+          "reviewsCount": 2905,
+          "imagesCount": 275,
+          "imageCategories": [
+            "All",
+            "Reception",
+            "Videos",
+            "By owner",
+            "Street View & 360°"
+          ],
+          "scrapedAt": "2026-07-30T23:09:21.402Z",
+          "reserveTableUrl": null,
+          "googleFoodUrl": null,
+          "hotelStars": null,
+          "hotelDescription": null,
+          "checkInDate": null,
+          "checkOutDate": null,
+          "hotelAds": [],
+          "popularTimesLiveText": null,
+          "popularTimesLivePercent": null,
+          "popularTimesHistogram": {},
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Thursday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Friday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Emergency Room - Dignity Health - Northridge Hospital Medical Center": [
+              {
+                "day": "Monday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Friday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Open 24 hours"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [
+            {
+              "category": "People also search for",
+              "title": "Northridge Hospital Foundation",
+              "reviewsCount": 10,
+              "totalScore": 3.5
+            },
+            {
+              "category": "People also search for",
+              "title": "Center for Healthier Communities - Dignity Health - Northridge Hospital Medical Center",
+              "reviewsCount": 0,
+              "totalScore": 0
+            },
+            {
+              "category": "People also search for",
+              "title": "Northridge Pain and Medical Center",
+              "reviewsCount": 36,
+              "totalScore": 3.3
+            }
+          ],
+          "placesTags": [
+            {
+              "title": "Food & Drink",
+              "count": 2
+            },
+            {
+              "title": "Shopping",
+              "count": 2
+            },
+            {
+              "title": "Health & Beauty",
+              "count": 13
+            },
+            {
+              "title": "Parking",
+              "count": 1
+            },
+            {
+              "title": "Other",
+              "count": 2
+            }
+          ],
+          "reviewsTags": [
+            {
+              "title": "emergency room",
+              "count": 154
+            },
+            {
+              "title": "mammogram",
+              "count": 23
+            },
+            {
+              "title": "wait time",
+              "count": 108
+            },
+            {
+              "title": "knee replacement surgery",
+              "count": 18
+            },
+            {
+              "title": "caring staff",
+              "count": 160
+            },
+            {
+              "title": "blood draw",
+              "count": 21
+            },
+            {
+              "title": "icu",
+              "count": 19
+            },
+            {
+              "title": "covid vaccine",
+              "count": 12
+            },
+            {
+              "title": "anesthesiologist",
+              "count": 11
+            },
+            {
+              "title": "ultrasound",
+              "count": 14
+            }
+          ],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Onsite services": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible parking lot": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Restroom": true
+              }
+            ],
+            "Planning": [
+              {
+                "Appointment required": true
+              },
+              {
+                "Appointments recommended": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              }
+            ],
+            "Parking": [
+              {
+                "Paid parking lot": true
+              },
+              {
+                "Paid street parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Dignity%20Health%20-%20Northridge%20Hospital%20Medical%20Center&query_place_id=ChIJzeSMrEqawoARVC8c1t3NZOs",
+          "searchPageUrl": "https://www.google.com/maps/search/Hospital/@34.055185398993856,-118.6163245590756,13z?hl=en",
+          "searchString": "Hospital",
+          "language": "en",
+          "rank": 6,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkZwS792uGrjYv8QZy7qAeOZnkwIUawuusYQO9dcX6TVWgEfcSLQKRuyEtpnVFD57MrJDuIbOow_5xULCED_4gBKVUcnesACQZSx_SA-Vr-M-M9YWmSOlzGBh2qhwMufs7VrEsgrrQq0YQ=w426-h240-k-no",
+          "kgmid": "/m/02qkjyz",
+          "reviewsDistribution": {
+            "oneStar": 374,
+            "twoStar": 65,
+            "threeStar": 103,
+            "fourStar": 242,
+            "fiveStar": 2121
+          },
+          "questionsAndAnswers": [],
+          "webResults": [],
+          "tableReservationLinks": [],
+          "tableReservationProviders": [],
+          "bookingLinks": [],
+          "restaurantData": {
+            "tableReservationProvider": null
+          },
+          "ownerUpdates": [],
+          "emails": [
+            "MediaInquiries@CommonSpirit.org"
+          ],
+          "phones": [
+            "8188858500",
+            "8188855434",
+            "8188855431",
+            "8187005648",
+            "8187185903",
+            "8442020709",
+            "8188853546"
+          ],
+          "phonesUncertain": [
+            "818-885-8500",
+            "(818) 718-5903",
+            "(844) 202-0709",
+            "(818) 885-8500",
+            "(818) 885-3546",
+            "0606-0097"
+          ],
+          "linkedIns": [
+            "https://www.linkedin.com/company/commonspirithealth"
+          ],
+          "twitters": [
+            "https://x.com/commonspirit"
+          ],
+          "instagrams": [
+            "https://www.instagram.com/commonspirithealth"
+          ],
+          "facebooks": [
+            "https://www.facebook.com/northridgehospital",
+            "https://www.facebook.com/commonspirithealth"
+          ],
+          "youtubes": [
+            "https://youtu.be/3GDO67pycc8",
+            "https://youtu.be/DWj8-bWJxfU",
+            "https://youtu.be/Q8wzy6app6o",
+            "https://youtu.be/eQHUZXSG_SY",
+            "https://www.youtube.com/@commonspirit"
+          ],
+          "tiktoks": [],
+          "pinterests": [],
+          "discords": [],
+          "facebookProfiles": [
+            {
+              "profileName": "CommonSpirit Health",
+              "profilePictureURL": "https://scontent-ord5-1.xx.fbcdn.net/v/t39.30808-1/357129080_660218139469482_7855431160485197845_n.jpg?stp=dst-jpg_tt6&cstp=mx376x376&ctp=s200x200&_nc_cat=107&ccb=1-7&_nc_sid=f907e8&_nc_ohc=wW_3C5kJH-QQ7kNvwGIG8Yo&_nc_oc=AdoBFA7PAancl-eMM-dLNhgNYVnjQBpX4GYgn03SSpWRJtlY7x-qsFBD_O2F2q9nwKSK1KS7mJSghJsXrwd67SvR&_nc_zt=24&_nc_ht=scontent-ord5-1.xx&_nc_gid=75yidjoma-KrfOJxPYaO5Q&_nc_ss=72289&oh=00_AQECbYil4CqnzcVRTDc-gXTIp6Sy1NBZ6hcGAo0NhLADIw&oe=6A71ABA0",
+              "description": "",
+              "username": "commonspirithealth",
+              "location": null,
+              "followersCount": 40389,
+              "externalProfileURL": "http://www.commonspirit.org/",
+              "profileURL": "https://www.facebook.com/commonspirithealth",
+              "creationDate": "October 10, 2018",
+              "coverPhoto": "https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/482349366_1060069119484380_8192390115309457895_n.jpg?stp=dst-jpg_tt6&cstp=mx828x315&ctp=s828x315&_nc_cat=102&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=VLvZnNHIow0Q7kNvwGSiJxY&_nc_oc=Adp-NiysWsocqc6h_eFwMO3vCyFgIRpYOE5yvF-nbP9qclF9CAUmUwSWiMBgwq1ETlAVZzn8ajQdM9CAZ_I6Lmsa&_nc_zt=23&_nc_ht=scontent-ord5-2.xx&_nc_gid=-iO9JXTgeB4bbaDfV__3pw&_nc_ss=72289&oh=00_AQGtkl_NuE-fVcnFwCgY511z_SGjtWTTWMn338dGGn0b2g&oe=6A719A67",
+              "socialInputUrl": "https://www.facebook.com/commonspirithealth",
+              "startUrl": "https://www.facebook.com/commonspirithealth",
+              "info": [
+                "CommonSpirit Health. 40,389 likes",
+                "137 talking about this. Thank you for contacting us. For us to comply with federal and state privacy laws, it is..."
+              ],
+              "likes": 40389,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Medical Service"
+              ],
+              "adStatus": "This Page isn't currently running ads.",
+              "facebookId": "100064439062481",
+              "phone": null,
+              "email": null,
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            },
+            {
+              "profileName": "Dignity Health - Northridge Hospital Medical Center | Northridge CA",
+              "profilePictureURL": "https://scontent-lax7-1.xx.fbcdn.net/v/t39.30808-1/514339884_1124754073005244_7482266904734811008_n.jpg?stp=dst-jpg_tt6&cstp=mx505x505&ctp=s200x200&_nc_cat=105&ccb=1-7&_nc_sid=f907e8&_nc_ohc=Rd_o4oIMGxAQ7kNvwFiAuEh&_nc_oc=AdqIDji2Gf-y52UTN812iBuGSiekXFoa9mKAVqcAvIkg0-CGzzsm_TtUBmdrjC5moSYcqTfetgtdu0APLhbPityc&_nc_zt=24&_nc_ht=scontent-lax7-1.xx&_nc_gid=ySYZaZLAtb1PFFO51zd_SQ&_nc_ss=72289&oh=00_AQEeLfuslvcSy0cY1OxfVV0cdmGBEkTsLfSObBDNOiP3-Q&oe=6A71A96F",
+              "description": "",
+              "username": "northridgehospital",
+              "location": "18300 Roscoe Blvd, Northridge, CA, United States, 91325",
+              "followersCount": 3690,
+              "externalProfileURL": "https://www.commonspirit.org/dignity-health-socal-contact-us",
+              "profileURL": "https://www.facebook.com/northridgehospital",
+              "creationDate": "February 16, 2010",
+              "coverPhoto": "https://scontent-lax3-1.xx.fbcdn.net/v/t39.30808-6/481664200_1033901205423865_3971760442174828337_n.jpg?stp=dst-jpg_tt6&cstp=mx2400x1200&ctp=s960x960&_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=we6rz5sjHhMQ7kNvwExcUCy&_nc_oc=AdomOX264k2YP3znMNQQCBLU-ycEwI7LxbK_lOP0D5xE41ExgTU1x_hWlRVp-Vrf1yUv9VlWNcCGfknUAyo94tK-&_nc_zt=23&_nc_ht=scontent-lax3-1.xx&_nc_gid=LLz2hQfpyjNo2Ij8iHWyMQ&_nc_ss=72289&oh=00_AQHAcgi2rX5A0_aIgK0VQB6n9cKkWCK4AYAG2S6a3k87FQ&oe=6A71BD9D",
+              "socialInputUrl": "https://www.facebook.com/northridgehospital",
+              "startUrl": "https://www.facebook.com/northridgehospital",
+              "info": [
+                "Dignity Health - Northridge Hospital Medical Center, Northridge. 3,690 likes",
+                "204 talking about this",
+                "38,247 were here. Thank you for contacting us...."
+              ],
+              "likes": 3690,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Hospital"
+              ],
+              "adStatus": "This Page is currently running ads.",
+              "facebookId": "100064119841882",
+              "phone": "(818) 885-8500",
+              "email": null,
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            }
+          ],
+          "instagramProfiles": [
+            {
+              "profileName": "CommonSpirit Health",
+              "profilePictureURL": "https://scontent.cdninstagram.com/v/t51.82787-19/719490587_18269105194294751_4663866904706722518_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4zNzYuQzMifQ%3D%3D&_nc_ohc=lmMK14MhUjMQ7kNvwGTWQjt&_nc_oc=Adq16uXmkfmdQR-rAHoSSMd94neeaW_Hy07hartQuc8IqimAhrDThjKDwe_qr4qpuy0&_nc_zt=24&_nc_ht=scontent.cdninstagram.com&_nc_gid=1B3tG5yHROoKPmJb0jV14A&_nc_ss=72689&oh=00_AQEmnRGUzG_NlaeSW3Fb0zzzmy7ym8NNSqtHfnmqO8DfTQ&oe=6A71B930",
+              "description": "In compliance with federal and state privacy laws, do not include any private health information in any message you send us through this channel.",
+              "username": "commonspirithealth",
+              "followersCount": 2229,
+              "followingCount": 131,
+              "externalProfileURL": "https://www.instagram.com/commonspirithealth",
+              "profileURL": "https://www.instagram.com/commonspirithealth",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.instagram.com/commonspirithealth",
+              "startUrl": "https://www.instagram.com/commonspirithealth",
+              "isBusinessAccount": true,
+              "postsCount": 427,
+              "accountId": "8692470750",
+              "coverPhoto": null,
+              "location": null,
+              "creationDate": null
+            }
+          ],
+          "tiktokProfiles": [],
+          "twitterProfiles": [
+            {
+              "profileName": "CommonSpirit Health",
+              "profilePictureURL": "https://pbs.twimg.com/profile_images/1807926681027678208/CpIGh7t8_normal.jpg",
+              "description": "In compliance with federal and state privacy laws, do not include any private health information in any message you send us through this channel.",
+              "username": "commonspirit",
+              "followersCount": 20267,
+              "followingCount": 392,
+              "location": "",
+              "profileURL": "https://x.com/commonspirit",
+              "creationDate": "Wed Nov 14 22:55:33 +0000 2018",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "coverPhoto": "https://pbs.twimg.com/profile_banners/1062841494627708928/1548960148",
+              "socialInputUrl": "https://www.twitter.com/commonspirit",
+              "startUrl": "https://www.twitter.com/commonspirit",
+              "mediaCount": 647,
+              "id": "1062841494627708928",
+              "isBlueVerified": false,
+              "externalProfileURL": null
+            }
+          ],
+          "youtubeProfiles": [
+            {
+              "profileName": "CommonSpirit Health",
+              "profilePictureURL": "https://yt3.googleusercontent.com/K6o7R8QF9wqxm6kLzlCqgMHYCpmKXFRVdZb22ef8IQPKH13c5IKty5Fi31C4N85CTMe2A7gsHA=s68-c-k-c0x00ffffff-no-rj",
+              "location": "United States",
+              "description": "CommonSpirit Health is one of the nation's largest nonprofit health systems, serving communities across the United States.\n\nHere you'll find inspiring stories from physicians, nurses, caregivers, patients, volunteers, and healthcare leaders working to improve the health of our communities every day.\n\nOur videos explore compassionate patient care, medical innovation, community health, health equity, behavioral health, hospital life, healthcare careers, and the everyday moments that remind us why humankindness matters.\n\nWhether you're a patient, healthcare professional, student, or simply interested in the future of healthcare, subscribe to discover the people and stories shaping a healthier tomorrow.\n\nLearn more at CommonSpirit.org.",
+              "followersCount": 1110,
+              "externalProfileURL": "https://www.youtube.com/channel/UCF2sYQaB5MiM0QqNz5lnQuA",
+              "profileURL": "https://www.youtube.com/channel/UCF2sYQaB5MiM0QqNz5lnQuA",
+              "creationDate": "Oct 10, 2018",
+              "coverPhoto": "https://yt3.googleusercontent.com/lhWYLUEwPRgT6zywReH1OAKEa-A4Xg2n3dBBLFP_enElrM3vZFunzQfKXbVud_EyEclmd4oKZA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.youtube.com/@commonspirit",
+              "startUrl": "https://www.youtube.com/@commonspirit",
+              "channelTotalVideos": 240,
+              "channelTotalViews": 500945,
+              "isAgeRestricted": false,
+              "id": "UCF2sYQaB5MiM0QqNz5lnQuA",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            },
+            {
+              "profileName": "Dignity Health Southern California",
+              "followersCount": 2480,
+              "externalProfileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "profileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "id": "UCvgPG28_PdaKTXQMd9J50bg",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            },
+            {
+              "profileName": "Dignity Health Southern California",
+              "followersCount": 2480,
+              "externalProfileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "profileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "id": "UCvgPG28_PdaKTXQMd9J50bg",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            },
+            {
+              "profileName": "Dignity Health Southern California",
+              "followersCount": 2480,
+              "externalProfileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "profileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "id": "UCvgPG28_PdaKTXQMd9J50bg",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            },
+            {
+              "profileName": "Dignity Health Southern California",
+              "followersCount": 2480,
+              "externalProfileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "profileURL": "https://www.youtube.com/@dignityhealthsoutherncalif2199",
+              "id": "UCvgPG28_PdaKTXQMd9J50bg",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            }
+          ],
+          "domain": "commonspirit.org",
+          "imageUrls": [],
+          "reviews": [],
+          "leadsEnrichment": []
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "title": "Encino Hospital Medical Center",
+          "subTitle": null,
+          "description": null,
+          "price": null,
+          "categoryName": "General hospital",
+          "address": "16237 Ventura Blvd, Encino, CA 91436",
+          "neighborhood": "Encino",
+          "street": "16237 Ventura Blvd",
+          "city": "Encino",
+          "postalCode": "91436",
+          "state": "California",
+          "countryCode": "US",
+          "website": "https://encinomed.org/",
+          "phone": "(818) 995-5000",
+          "phoneUnformatted": "+18189955000",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 34.1570671,
+            "lng": -118.4869162
+          },
+          "locatedIn": null,
+          "floor": null,
+          "plusCode": "5G47+R6 Encino, Los Angeles, CA",
+          "menu": null,
+          "servicesLink": null,
+          "totalScore": 3.7,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJzzmYeyeYwoARnI8GC0NCCeY",
+          "categories": [
+            "General hospital",
+            "Hospital"
+          ],
+          "fid": "0x80c298277b9839cf:0xe60942430b068f9c",
+          "cid": "16575852759229042588",
+          "reviewsCount": 408,
+          "imagesCount": 79,
+          "imageCategories": [
+            "All",
+            "Hospital",
+            "Videos",
+            "By owner",
+            "Street View & 360°"
+          ],
+          "scrapedAt": "2026-07-30T23:09:27.401Z",
+          "reserveTableUrl": null,
+          "googleFoodUrl": null,
+          "hotelStars": null,
+          "hotelDescription": null,
+          "checkInDate": null,
+          "checkOutDate": null,
+          "hotelAds": [],
+          "popularTimesLiveText": null,
+          "popularTimesLivePercent": null,
+          "popularTimesHistogram": {},
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Thursday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Friday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "peopleAlsoSearch": [
+            {
+              "category": "People also search for",
+              "title": "Encino Medical Center",
+              "reviewsCount": 5,
+              "totalScore": 5
+            },
+            {
+              "category": "People also search for",
+              "title": "Encino Medical Clinic",
+              "reviewsCount": 0,
+              "totalScore": 0
+            },
+            {
+              "category": "People also search for",
+              "title": "Sherman Oaks Hospital",
+              "reviewsCount": 526,
+              "totalScore": 3.1
+            },
+            {
+              "category": "People also search for",
+              "title": "Medical Group of Encino",
+              "reviewsCount": 2,
+              "totalScore": 3
+            }
+          ],
+          "placesTags": [
+            {
+              "title": "Recreations",
+              "count": 1
+            },
+            {
+              "title": "Services",
+              "count": 3
+            },
+            {
+              "title": "Health & Beauty",
+              "count": 5
+            },
+            {
+              "title": "Other",
+              "count": 4
+            }
+          ],
+          "reviewsTags": [
+            {
+              "title": "emergency room",
+              "count": 69
+            },
+            {
+              "title": "wait time",
+              "count": 29
+            },
+            {
+              "title": "caring staff",
+              "count": 41
+            },
+            {
+              "title": "blood draw",
+              "count": 5
+            },
+            {
+              "title": "ultrasound",
+              "count": 6
+            },
+            {
+              "title": "pain management",
+              "count": 7
+            },
+            {
+              "title": "informative doctor",
+              "count": 2
+            },
+            {
+              "title": "accurate diagnosis",
+              "count": 2
+            },
+            {
+              "title": "private rooms",
+              "count": 2
+            },
+            {
+              "title": "cozy atmosphere",
+              "count": 4
+            }
+          ],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Onsite services": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible parking lot": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Restroom": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free parking lot": true
+              },
+              {
+                "Free street parking": true
+              },
+              {
+                "Paid parking lot": true
+              },
+              {
+                "Paid street parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Encino%20Hospital%20Medical%20Center&query_place_id=ChIJzzmYeyeYwoARnI8GC0NCCeY",
+          "searchPageUrl": "https://www.google.com/maps/search/Hospital/@34.055185398993856,-118.6163245590756,13z?hl=en",
+          "searchString": "Hospital",
+          "language": "en",
+          "rank": 5,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmMeJmEIFNuUsEJTZOpD6VRTUGu6VU7quhaY68Hilags4eAqu2Ll6tnb0kRBDO-rhhvBzN4D4OOHsm6D0U9ICAsV--J1dSFgX5xk0A_rgJWteep34Eu8yI582C5iHMwsL-_yIpJ=w426-h240-k-no",
+          "kgmid": "/m/0bmcd2c",
+          "reviewsDistribution": {
+            "oneStar": 119,
+            "twoStar": 10,
+            "threeStar": 12,
+            "fourStar": 12,
+            "fiveStar": 255
+          },
+          "questionsAndAnswers": [],
+          "webResults": [],
+          "tableReservationLinks": [],
+          "tableReservationProviders": [],
+          "bookingLinks": [],
+          "restaurantData": {
+            "tableReservationProvider": null
+          },
+          "ownerUpdates": [
+            {
+              "text": "Encino Hospital Medical Center Earns Heart Failure Gold Plus Award\nEncino Hospital Medical Center has received the American Heart Association’s Get with the Guidelines® – Heart Failure Gold Plus Quality Achievement Award for its commitment to providing high-quality, evidence-based heart failure care.\n\nThis recognition highlights the hospital’s dedication to improving patient outcomes and following the latest treatment guidelines for heart failure.\n\nEncino Hospital Medical Center is committed to delivering high-quality care by following the latest evidence-based treatment guidelines, said EM V. Garcia, CEO.\n\nThe hospital also earned recognition through the Target: Heart FailureSM Optimal program and the Target: Type 2 Diabetes Honor Roll™ for its commitment to quality patient care.",
+              "buttonText": "Learn more",
+              "buttonLink": "https://encinomed.org/encino-hospital-medical-center-is-nationally-recognized-for-commitment-to-excellence-in-heart-failure-care/",
+              "date": "2026-07-30T10:51:25.000Z",
+              "imageUrl": "https://lh3.googleusercontent.com/geougc/AF1QipMxrRFECEbLT_q7jS_kPx00Ag9DWFaX8r9mcdQJ=h400-no"
+            },
+            {
+              "text": "Encino Hospital Medical Center Earns Top “A” Grades on 2026 Lown Index\nEncino Hospital Medical Center, a member of Prime Healthcare Foundation, has earned six “A” grades on the 2026 Lown Hospitals Index for:\nValue of Care\nPatient Outcomes\nClinical Outcomes\nPay Equity\nAvoiding Overuse\nCost Efficiency\n\nThese recognitions highlight the hospital’s commitment to high-quality, patient-centered, and cost-effective care.\n\nThe Lown Hospitals Index evaluates hospitals nationwide on equity, community impact, and value of care using more than 50 metrics.\n\nThis achievement adds to Encino Hospital Medical Center’s continued national recognition for quality, patient safety, and clinical excellence.",
+              "buttonText": "Learn more",
+              "buttonLink": "https://encinomed.org/encino-hospital-medical-center-earns-top-marks-on-lown-institute-index/",
+              "date": "2026-06-29T10:38:53.000Z",
+              "imageUrl": "https://lh3.googleusercontent.com/geougc/AF1QipNVyWHCjZS-CnvRkzyJG3eOIC8wVJBHzBZ7cWcg=h400-no"
+            },
+            {
+              "text": "Encino Hospital Medical Center Named to Becker’s 100 Great Community Hospitals List\nEncino Hospital Medical Center, a member of Prime Healthcare, has been recognized in Becker’s Hospital Review’s 2026 “100 Great Community Hospitals” list, joining other leading hospitals in the Los Angeles area.\n\n“This recognition reflects the heart, compassion, and deep commitment to healing that our physicians, nurses, caregivers, and support teams bring to every patient, every day,” said EM V. Garcia, Chief Executive Officer.\n\nThis marks the third consecutive year Encino Hospital has been included on this prestigious list, highlighting its dedication to accessible, high-quality patient care. \n\nBecker’s Healthcare selects hospitals based on nominations and editorial research, and organizations cannot pay for inclusion.\nEncino Hospital was also recently honored with the 2026 PRC Excellence in Healthcare Award, including recognition as a 5-Star Excellence Award recipient in emergency department services for Patient Experience.",
+              "buttonText": "Learn more",
+              "buttonLink": "https://encinomed.org/encino-hospital-medical-center-named-to-100-great-community-hospitals-list-by-beckers-2026/",
+              "date": "2026-06-08T11:13:35.000Z",
+              "imageUrl": "https://lh3.googleusercontent.com/geougc/AF1QipO2JUL2W2q8mzDEm_Czql2x_NBUHFPP1F2VMFcs=h400-no"
+            },
+            {
+              "text": " April is National Stress Awareness Month\nYour mental health is just as important as your physical health. Stress can affect your body in ways you may not notice at first.\n\nWhy Stress Matters\nStress-related problems make up over 30% of emergency and mental health visits among adolescents. Ongoing stress keeps the body in “fight or flight” mode, releasing hormones that can raise blood pressure and increase heart risks over time.\n\nTake Control of Your Wellness\nIdentify what causes your stress\nSchedule regular check-ups to catch stress-related health issues early\nSeek behavioral health support when needed\n\nOur care teams use screenings like heart rate and blood pressure checks to look for signs of long-term stress.\nThis Stress Awareness Month, focus on calming your mind to support your heart and overall health.",
+              "buttonText": "Learn more",
+              "buttonLink": "https://encinomed.org/understanding-the-connection-why-managing-stress-is-vital-for-your-health/",
+              "date": "2026-04-23T10:07:47.000Z",
+              "imageUrl": "https://lh3.googleusercontent.com/geougc/AF1QipNKCK5BDuvCRobIoLUUTyN2Jgl0ZrDsCGA43G_R=h400-no"
+            },
+            {
+              "text": "Encino Hospital Medical Center Receives 5‑Star Excellence Award\nEncino Hospital Medical Center has been recognized as a 2026 PRC Excellence in Healthcare 5‑Star Award recipient for Emergency Department Patient Experience.\n\nThis award, presented by Professional Research Consultants (PRC), is based on patient survey feedback and highlights our commitment to delivering compassionate, high‑quality care.\n\nPRC President and CEO Joe M. Inguanzo, Ph.D. shared that this recognition reflects dedication to improving patient experiences, employee engagement, and physician alignment.\n\n“We are deeply honored to receive this recognition,” said EM V. Garcia, Chief Executive Officer. “Because this award is based on survey feedback, it reflects the real experiences and voices of our patients, employees, and physicians. I am incredibly proud of our team and the culture of care they embody.”\n\nEncino Hospital Medical Center remains committed to continuously improving the patient experience and ensuring every individual feels cared for, valued, and safe.",
+              "buttonText": "Learn more",
+              "buttonLink": "https://encinomed.org/encino-hospital-medical-center-in-encino-receives-excellence-in-healthcare-award/",
+              "date": "2026-04-17T09:37:59.000Z",
+              "imageUrl": "https://lh3.googleusercontent.com/geougc/AF1QipOt1Yjo0wOZU-T7vW3-3TtVvJ_HUAzXuAed_rDP=h400-no"
+            },
+            {
+              "text": "Patient Safety Is a Mission, Not a Statistic\nDuring Patient Safety Awareness Week, we thank our dedicated care teams at Encino Hospital Medical Center for their daily commitment to safe, compassionate, and high‑quality care.\n\nPatient safety is built into everything we do from medication accuracy and infection prevention to surgical checklists and systems designed to prevent errors before they reach patients. These practices support better outcomes, open communication, and stronger trust between patients and caregivers.\n\nTransparency is key to building confidence. Hospital Safety Grades from The Leapfrog Group reflect our ongoing focus on safety and accountability. Across Prime Healthcare, many hospitals have earned an “A” Safety Grade, setting a national benchmark for quality care.\n\nThis Patient Safety Awareness Week, we encourage patients and families to be active partners in their care and focus on what matters most healing.",
+              "buttonText": "Learn more",
+              "buttonLink": "https://encinomed.org/celebrating-patient-safety-awareness-week-2026/",
+              "date": "2026-03-27T03:23:54.000Z",
+              "imageUrl": "https://lh3.googleusercontent.com/geougc/AF1QipP6ZF31BHql-3sGme1rTEQnWXg5u9QkxwCobq8E=h400-no"
+            }
+          ],
+          "emails": [
+            "PMacalino@primehealthcare.com",
+            "hr-prime@primehealthcare.com"
+          ],
+          "phones": [
+            "818-995-5000",
+            "8189955000",
+            "818-907-4540",
+            "909-235-4400"
+          ],
+          "phonesUncertain": [
+            "(818) 722-8832",
+            "818-995-5000",
+            "818-907-4540",
+            "2020-2022",
+            "2023-2025",
+            "2026-2028",
+            "909-235-4400"
+          ],
+          "linkedIns": [
+            "https://www.linkedin.com/company/encino-hospital-medical-center",
+            "https://www.linkedin.com/company/prime-healthcare"
+          ],
+          "twitters": [
+            "https://twitter.com/EncinoHospital",
+            "https://twitter.com/_primehealth"
+          ],
+          "instagrams": [
+            "https://www.instagram.com/encinohospitalmedicalcenter"
+          ],
+          "facebooks": [
+            "https://www.facebook.com/encinomed",
+            "https://www.facebook.com/primehealthcare"
+          ],
+          "youtubes": [
+            "https://www.youtube.com/embed/kaSFOUUjMTE",
+            "https://www.youtube.com/embed/vkJbPYTZ3K8",
+            "https://youtu.be/vkJbPYTZ3K8",
+            "https://www.youtube.com/user/primehealthcares"
+          ],
+          "tiktoks": [],
+          "pinterests": [],
+          "discords": [],
+          "facebookProfiles": [
+            {
+              "profileName": "Prime Healthcare | Ontario CA",
+              "profilePictureURL": "https://scontent-iad3-1.xx.fbcdn.net/v/t39.30808-1/348221201_768360284730967_1029690291945287290_n.jpg?stp=dst-jpg_tt6&cstp=mx1446x1446&ctp=s200x200&_nc_cat=104&ccb=1-7&_nc_sid=f907e8&_nc_ohc=oAwWKhrNlRQQ7kNvwHGQvnr&_nc_oc=Adooy5WLdB45YmmBcAsVMHP70HNlVFGXis9A-H0oS7ANNhOcAIDaFX0B-D_-HTOFpRKDY-vCcQjneoAqVfPhigNi&_nc_zt=24&_nc_ht=scontent-iad3-1.xx&_nc_gid=Jk5I87UycILzz4R_yDRjkg&_nc_ss=7c289&oh=00_AQGasT9ynba4o8C4x4JzieM-FR0udWYuUSXWc6WR4ZI0cQ&oe=6A71BD90",
+              "description": "",
+              "username": "primehealthcare",
+              "location": "3480 E. Guasti Road, Ontario, CA, United States, 91761",
+              "followersCount": 5181,
+              "externalProfileURL": "http://primehealthcare.com/",
+              "profileURL": "https://www.facebook.com/primehealthcare",
+              "creationDate": "February 17, 2011",
+              "coverPhoto": "https://scontent-iad3-1.xx.fbcdn.net/v/t39.30808-6/494936175_1258546422940151_5047905658652574489_n.jpg?stp=dst-jpg_tt6&cstp=mx940x348&ctp=s940x348&_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=YkU6RYP-VVoQ7kNvwGetIuT&_nc_oc=AdqRD7_anlegv98F0zU4crnaxynLClrWHnSvdWl6I_7lvjTLflfddlnFNuRy-Db9K_waTsVWCE9w-dugB-JsB2I6&_nc_zt=23&_nc_ht=scontent-iad3-1.xx&_nc_gid=kbAzI87luLDkDc-OKreVzg&_nc_ss=7c289&oh=00_AQFSTgxZUHQykMma3xI1oIWiFeMdN6zas5_VbNV0x0LiTQ&oe=6A71B019",
+              "socialInputUrl": "https://www.facebook.com/primehealthcare",
+              "startUrl": "https://www.facebook.com/primehealthcare",
+              "info": [
+                "Prime Healthcare, Ontario. 5,181 likes",
+                "28 talking about this",
+                "774 were here. Prime Healthcare is an award-winning health system operating 51 hospitals."
+              ],
+              "likes": 5181,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Medical & health"
+              ],
+              "adStatus": "This Page is currently running ads.",
+              "facebookId": "100063544151969",
+              "phone": "(909) 235-4400",
+              "email": null,
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            },
+            {
+              "profileName": "Encino Hospital Medical Center | Encino CA",
+              "profilePictureURL": "https://scontent-ord5-1.xx.fbcdn.net/v/t39.30808-1/237920829_4391002954285657_8393075686358645463_n.jpg?stp=dst-jpg_tt6&cstp=mx1807x1807&ctp=s200x200&_nc_cat=108&ccb=1-7&_nc_sid=f907e8&_nc_ohc=gCks_XHNBmEQ7kNvwE69t91&_nc_oc=AdpD7bj86J3aHN_wYhUfwr0w-FsbirnilP7mJ-UoRP2qxttaENmWwLlI8ZET9gGVL_A&_nc_zt=24&_nc_ht=scontent-ord5-1.xx&_nc_gid=Bq3tExn3aGF1mtdWuQCqxw&_nc_ss=72289&oh=00_AQF_f01GtqLEovHZRkuHUR7Ip8jLiwkBfOx7wbikPgDxxw&oe=6A7191A4",
+              "description": "",
+              "username": "encinomed",
+              "location": "16237 Ventura Blvd, Encino, CA, United States, 91436",
+              "followersCount": 745,
+              "externalProfileURL": "http://www.encinomed.org/",
+              "profileURL": "https://www.facebook.com/encinomed",
+              "creationDate": "February 18, 2011",
+              "coverPhoto": "https://scontent-ord5-3.xx.fbcdn.net/v/t39.30808-6/312838573_540601544740432_7125183767403572888_n.png?stp=dst-png&cstp=mx828x315&ctp=s828x315&_nc_cat=100&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=Q5L13Rt7c68Q7kNvwGg7IAM&_nc_oc=AdoP4hj7G5jKlfgubxw0y4s-27zeep1xYJqB3MXPoNvThnGrpJ2wnQbjYMk11jAX-WY&_nc_zt=23&_nc_ht=scontent-ord5-3.xx&_nc_gid=cHZgwcsI8VZlzJWlLnXuuA&_nc_ss=72289&oh=00_AQFlB7Moz883tPK7sDx_IXYQKFEiDooSAsyH1Too9cgUEw&oe=6A71ACD1",
+              "socialInputUrl": "https://www.facebook.com/encinomed",
+              "startUrl": "https://www.facebook.com/encinomed",
+              "info": [
+                "Encino Hospital Medical Center, Encino. 745 likes",
+                "5 talking about this",
+                "4,708 were here. A 150-bed non-profit hospital serving the community with..."
+              ],
+              "likes": 745,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Hospital"
+              ],
+              "adStatus": "This Page isn't currently running ads.",
+              "facebookId": "100063717723599",
+              "phone": "+1 818-995-5000",
+              "email": "ehmcsocial@primehealthcare.com",
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            }
+          ],
+          "instagramProfiles": [
+            {
+              "profileName": "Encino Hospital Medical Center",
+              "profilePictureURL": "https://scontent-sin6-1.cdninstagram.com/v/t51.2885-19/110008248_316105392909542_7853963992541612378_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=111&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=i2Cn9sVETiEQ7kNvwGUuhT_&_nc_oc=AdoR_sIKOPubFj9Scpw1UnPD0dw0MGyGdxahgf_K8SKOAWw2KKRYX5VOkFhV-RyTu4M&_nc_zt=24&_nc_ht=scontent-sin6-1.cdninstagram.com&_nc_ss=72a8c&oh=00_AQGUZ0k9L2y4ztcsx0xDETYvGalQsK-hmn_gS20qTL39rw&oe=6A71B810",
+              "description": "EHMC is a 150-bed, not-for-profit, acute-care community hospital providing high-quality, compassionate care in the greater San Fernando Valley.",
+              "username": "encinohospitalmedicalcenter",
+              "followersCount": 457,
+              "followingCount": 268,
+              "externalProfileURL": "https://www.instagram.com/encinohospitalmedicalcenter",
+              "profileURL": "https://www.instagram.com/encinohospitalmedicalcenter",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.instagram.com/encinohospitalmedicalcenter",
+              "startUrl": "https://www.instagram.com/encinohospitalmedicalcenter",
+              "isBusinessAccount": true,
+              "postsCount": 274,
+              "accountId": "12773543713",
+              "coverPhoto": null,
+              "location": null,
+              "creationDate": null
+            }
+          ],
+          "tiktokProfiles": [],
+          "twitterProfiles": [
+            {
+              "profileName": "Encino Hospital",
+              "profilePictureURL": "https://pbs.twimg.com/profile_images/920397653015326720/3DfJSEer_normal.jpg",
+              "description": "A 150-bed non-profit hospital serving the community with comprehensive, award-winning care.  Contact us at (818) 995-5000.",
+              "username": "EncinoHospital",
+              "followersCount": 44,
+              "followingCount": 28,
+              "location": "Encino, CA",
+              "profileURL": "https://x.com/EncinoHospital",
+              "creationDate": "Sat Feb 19 06:55:09 +0000 2011",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "coverPhoto": "https://pbs.twimg.com/profile_banners/254418540/1508274393",
+              "socialInputUrl": "https://www.twitter.com/encinohospital",
+              "startUrl": "https://www.twitter.com/encinohospital",
+              "mediaCount": 19,
+              "id": "254418540",
+              "isBlueVerified": false,
+              "externalProfileURL": null
+            },
+            {
+              "profileName": "Prime Healthcare",
+              "profilePictureURL": "https://pbs.twimg.com/profile_images/1276227942524174336/rOjcl8XB_normal.jpg",
+              "description": "Saving hospitals. Saving jobs. Saving lives. Committed to quality, compassionate care, and service to the community.",
+              "username": "_PrimeHealth",
+              "followersCount": 341,
+              "followingCount": 117,
+              "location": "Ontario, California",
+              "profileURL": "https://x.com/_PrimeHealth",
+              "creationDate": "Thu Jun 25 16:33:59 +0000 2020",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "coverPhoto": "https://pbs.twimg.com/profile_banners/1276191884763820032/1593108957",
+              "socialInputUrl": "https://www.twitter.com/_primehealth",
+              "startUrl": "https://www.twitter.com/_primehealth",
+              "mediaCount": 384,
+              "id": "1276191884763820032",
+              "isBlueVerified": false,
+              "externalProfileURL": null
+            }
+          ],
+          "youtubeProfiles": [
+            {
+              "profileName": "Prime Healthcare",
+              "profilePictureURL": "https://yt3.googleusercontent.com/ytc/AIdro_nlwuCKZFY9UY4zqA49AjdnbkHt3fwLb7IzgL65oCdWXu0=s68-c-k-c0x00ffffff-no-rj",
+              "location": null,
+              "description": "Committed to Quality, Compassionate Care, and Service to the Community.\n\nFounded in 2001, Prime Healthcare has emerged as one of the nation’s leading hospital systems. Prime Healthcare was founded by Dr. Prem Reddy, a physician with a mission to save hospitals, improve community healthcare and provide the very best care to patients.",
+              "followersCount": 324,
+              "externalProfileURL": "https://www.youtube.com/channel/UCtASSK_9dRiux2oP-nlDsqA",
+              "profileURL": "https://www.youtube.com/channel/UCtASSK_9dRiux2oP-nlDsqA",
+              "creationDate": "Feb 21, 2011",
+              "coverPhoto": "https://yt3.googleusercontent.com/jBe7YUIk5mR_87S5sRDTQh05XB7k02fJRHqyvwTlUQKCTUsUPcnnEiQMK2sqOHhQOyFEuow2=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.youtube.com/user/primehealthcares",
+              "startUrl": "https://www.youtube.com/user/primehealthcares",
+              "channelTotalVideos": 53,
+              "channelTotalViews": 84992,
+              "isAgeRestricted": false,
+              "id": "UCtASSK_9dRiux2oP-nlDsqA",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            },
+            {
+              "profileName": "Prime Healthcare",
+              "followersCount": 324,
+              "externalProfileURL": "https://www.youtube.com/@primehealthcares",
+              "profileURL": "https://www.youtube.com/@primehealthcares",
+              "id": "UCtASSK_9dRiux2oP-nlDsqA",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            }
+          ],
+          "domain": "encinomed.org",
+          "imageUrls": [],
+          "reviews": [],
+          "leadsEnrichment": []
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "title": "Cedars-Sinai Marina Hospital",
+          "subTitle": null,
+          "description": null,
+          "price": null,
+          "categoryName": "General hospital",
+          "address": "4650 Lincoln Blvd, Mindanao Wy Entrance, Marina Del Rey, CA 90292",
+          "neighborhood": "Del Rey",
+          "street": "4650 Lincoln Blvd, Mindanao Wy Entrance",
+          "city": "Marina Del Rey",
+          "postalCode": "90292",
+          "state": "CA",
+          "countryCode": "US",
+          "website": "https://www.marinahospital.com/",
+          "phone": "(310) 823-8911",
+          "phoneUnformatted": "+13108238911",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 33.9821141,
+            "lng": -118.4392551
+          },
+          "locatedIn": "Cedars-Sinai Emergency Room - Marina del Rey",
+          "floor": "Floor 1",
+          "plusCode": "XHJ6+R7 Marina Del Rey, California",
+          "menu": null,
+          "servicesLink": null,
+          "totalScore": 3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJjYgIooC6woARq1OLHD5Ur0s",
+          "categories": [
+            "General hospital"
+          ],
+          "fid": "0x80c2ba80a208888d:0x4baf543e1c8b53ab",
+          "cid": "5453670299512558507",
+          "reviewsCount": 329,
+          "imagesCount": 38,
+          "imageCategories": [
+            "All",
+            "By owner",
+            "Videos",
+            "Street View & 360°"
+          ],
+          "scrapedAt": "2026-07-30T23:10:11.064Z",
+          "reserveTableUrl": null,
+          "googleFoodUrl": null,
+          "hotelStars": null,
+          "hotelDescription": null,
+          "checkInDate": null,
+          "checkOutDate": null,
+          "hotelAds": [],
+          "popularTimesLiveText": null,
+          "popularTimesLivePercent": null,
+          "popularTimesHistogram": {},
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Thursday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Friday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Cedars-Sinai Emergency Room - Marina del Rey": [
+              {
+                "day": "Monday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Friday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Open 24 hours"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [
+            {
+              "category": "People also search for",
+              "title": "Cedars-Sinai Multispecialty - Marina del Rey",
+              "reviewsCount": 1,
+              "totalScore": 5
+            },
+            {
+              "category": "People also search for",
+              "title": "Cedars-Sinai Medical Center",
+              "reviewsCount": 1583,
+              "totalScore": 3.4
+            },
+            {
+              "category": "People also search for",
+              "title": "Cedars Sinai Medical Group Culver City Family Medicine",
+              "reviewsCount": 0,
+              "totalScore": 0
+            },
+            {
+              "category": "People also search for",
+              "title": "Beach Cities Emergency Medical Group Inc",
+              "reviewsCount": 0,
+              "totalScore": 0
+            }
+          ],
+          "placesTags": [
+            {
+              "title": "Health & Beauty",
+              "count": 10
+            }
+          ],
+          "reviewsTags": [
+            {
+              "title": "wait time",
+              "count": 22
+            },
+            {
+              "title": "blood draw",
+              "count": 6
+            },
+            {
+              "title": "emergency room",
+              "count": 18
+            },
+            {
+              "title": "pain management",
+              "count": 12
+            },
+            {
+              "title": "surgery",
+              "count": 26
+            },
+            {
+              "title": "kind staff",
+              "count": 18
+            },
+            {
+              "title": "anesthesiologist",
+              "count": 2
+            },
+            {
+              "title": "x-rays",
+              "count": 12
+            },
+            {
+              "title": "dedicated nurses",
+              "count": 2
+            },
+            {
+              "title": "nurse practitioner",
+              "count": 2
+            }
+          ],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Onsite services": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible parking lot": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Restroom": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              }
+            ],
+            "Parking": [
+              {
+                "Paid parking lot": true
+              },
+              {
+                "Paid street parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Cedars-Sinai%20Marina%20Hospital&query_place_id=ChIJjYgIooC6woARq1OLHD5Ur0s",
+          "searchPageUrl": "https://www.google.com/maps/search/Hospital/@34.055185398993856,-118.6163245590756,13z?hl=en",
+          "searchString": "Hospital",
+          "language": "en",
+          "rank": 4,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkjOSGkK2zHtr7IQf2ZsM22IcaHL6wyzvlVDJYa_SHbJ7QbMSde4JZfy2Zc_6pmrYg7CtRghbgo87c4T8UYYGF9_CyApanbcfB1_9UfJUh7xbExFUqheQ68Ds6jwz8NVHfBT_M0=w426-h240-k-no",
+          "kgmid": "/g/1ptwh9228",
+          "reviewsDistribution": {
+            "oneStar": 137,
+            "twoStar": 20,
+            "threeStar": 14,
+            "fourStar": 21,
+            "fiveStar": 137
+          },
+          "questionsAndAnswers": [],
+          "webResults": [],
+          "tableReservationLinks": [],
+          "tableReservationProviders": [],
+          "bookingLinks": [],
+          "restaurantData": {
+            "tableReservationProvider": null
+          },
+          "ownerUpdates": [],
+          "emails": [
+            "info@marinahospital.com"
+          ],
+          "phones": [
+            "310.823.8911",
+            "310.448.5225",
+            "310.577.5549"
+          ],
+          "phonesUncertain": [
+            "10013058",
+            "33.982042",
+            "118.439406",
+            "310-823-8911",
+            "888-6000-5600",
+            "310-448-5200",
+            "7 (310) 823-8911",
+            "(310) 448-5200",
+            "310.823.8911",
+            "310.448.5200",
+            "888.600.5600",
+            "310-482-5105",
+            "0292 (310) 823-8911",
+            "(310) 448-5225",
+            "(310) 823-8911",
+            "(310) 577-5549"
+          ],
+          "linkedIns": [
+            "https://www.linkedin.com/company/marina-del-rey-hospital",
+            "http://www.linkedin.com/company/marina-del-rey-hospital"
+          ],
+          "twitters": [
+            "https://twitter.com/MDRHospital"
+          ],
+          "instagrams": [],
+          "facebooks": [
+            "https://www.facebook.com/MDRHospital"
+          ],
+          "youtubes": [
+            "https://www.youtube.com/user/MarinaDelReyHospital"
+          ],
+          "tiktoks": [],
+          "pinterests": [],
+          "discords": [],
+          "facebookProfiles": [
+            {
+              "profileName": "Marina del Rey Hospital | Marina del Rey CA",
+              "profilePictureURL": "https://scontent.fabe1-1.fna.fbcdn.net/v/t39.30808-1/313035660_548333203963202_7474512747773551520_n.png?stp=dst-png&cstp=mx800x800&ctp=s200x200&_nc_cat=106&ccb=1-7&_nc_sid=f907e8&_nc_ohc=fDYBYzGj4DwQ7kNvwEI8QR3&_nc_oc=AdpCD0lWt-d8RrUzN-GqEYcUi3qBXn_nKA7Ywf_qTUeH1dxqE732RUQ7ZqeQ8KKYY3i4_DpLW2fEVZzbO1t6zQRJ&_nc_zt=24&_nc_ht=scontent.fabe1-1.fna&_nc_gid=0F4e8W7ZCCnouCp_WWcykw&_nc_ss=7c289&oh=00_AQEiHgAPj2XJgJ25_XtuHJyknHxMGy3HPLrONNsuetrvjg&oe=6A71960B",
+              "description": "",
+              "username": "MDRHospital",
+              "location": "4650 Lincoln Blvd, Marina del Rey, CA, United States, 90292",
+              "followersCount": 4568,
+              "externalProfileURL": "http://www.marinahospital.com/",
+              "profileURL": "https://www.facebook.com/MDRHospital",
+              "creationDate": "August 15, 2012",
+              "coverPhoto": "https://scontent.fabe1-1.fna.fbcdn.net/v/t39.30808-6/749084905_1659234866206358_8083044645111222146_n.jpg?stp=dst-jpg_tt6&cstp=mx1218x761&ctp=s1218x761&_nc_cat=103&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=gB3iIxraGVUQ7kNvwEyU3uh&_nc_oc=AdqBxBHoZL2QvOWoGAjdBiZXMQGfj0W4SDeK51zhCVokP2yWtOhfs9IACamS2fVxa2WKOQ2EzKP_ue8RS0rXlz75&_nc_zt=23&_nc_ht=scontent.fabe1-1.fna&_nc_gid=8oH3jN6VL06GZCDbix14_Q&_nc_ss=7c289&oh=00_AQGfOSPn12Dnn-aXtwu0HadPmL7M7sAa7WnLVp8jHs8VGg&oe=6A71B47A",
+              "socialInputUrl": "https://www.facebook.com/MDRHospital",
+              "startUrl": "https://www.facebook.com/MDRHospital",
+              "info": [
+                "Marina del Rey Hospital, Marina del Rey. 4,568 likes",
+                "157 talking about this",
+                "8,733 were here. Cedars-Sinai Marina del Rey Hospital provides..."
+              ],
+              "likes": 4568,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Hospital"
+              ],
+              "adStatus": "This Page isn't currently running ads.",
+              "facebookId": "100063595819897",
+              "phone": "(310) 823-8911",
+              "email": "socialmedia@cshs.org",
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            }
+          ],
+          "instagramProfiles": [],
+          "tiktokProfiles": [],
+          "twitterProfiles": [
+            {
+              "profileName": "MarinaDelReyHospital",
+              "profilePictureURL": "https://pbs.twimg.com/profile_images/1067130144224030720/hi853PBx_normal.jpg",
+              "description": "Stunning Location. Superior Care. At Marina del Rey Hospital, medical excellence and compassion go hand-in-hand. We offer top health care in a lovely setting.",
+              "username": "MDRHospital",
+              "followersCount": 1194,
+              "followingCount": 428,
+              "location": "Marina del Rey, CA",
+              "profileURL": "https://x.com/MDRHospital",
+              "creationDate": "Fri Aug 17 19:06:41 +0000 2012",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "coverPhoto": "https://pbs.twimg.com/profile_banners/764266044/1543977189",
+              "socialInputUrl": "https://www.twitter.com/mdrhospital",
+              "startUrl": "https://www.twitter.com/mdrhospital",
+              "mediaCount": 455,
+              "id": "764266044",
+              "isBlueVerified": false,
+              "externalProfileURL": null
+            }
+          ],
+          "youtubeProfiles": [
+            {
+              "profileName": "Marina del Rey Hospital",
+              "profilePictureURL": "https://yt3.googleusercontent.com/ytc/AIdro_lmJE98lJg-JG95OXLVsETj0cXVue6vLOkB8Ka85dOU5iA=s68-c-k-c0x00ffffff-no-rj",
+              "location": "United States",
+              "description": "Marina Del Rey Hospital is a 145-bed acute care Joint Commission accredited hospital offering general acute medical services and 24/7 emergency care. Step inside Marina Del Rey Hospital (formerly CentinelaFreeman Regional Medical Center – Marina Campus) and you’ll find a team of highly talented and specialized professionals that believe caring, warmth and true compassion go hand-in-hand with medical excellence.  As a surgical hospital focused on spine, orthopedics, weight loss and minimally invasive surgery, our mission is to enhance your life by providing you with nationally recognized physicians dedicated to providing you with focused care and a healthier lifestyle.",
+              "followersCount": 310,
+              "externalProfileURL": "https://www.youtube.com/channel/UChrBWGi-K5Qol2cog4sdzVA",
+              "profileURL": "https://www.youtube.com/channel/UChrBWGi-K5Qol2cog4sdzVA",
+              "creationDate": "Jul 31, 2013",
+              "coverPhoto": "https://yt3.googleusercontent.com/vR8CCo63uRIAqBsn3JmzCHN9BXHotULp2ZrmlUJ9ct9VLESIcRYkKX2e-dFjXAZdZzI-8GjUMIk=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.youtube.com/user/MarinaDelReyHospital",
+              "startUrl": "https://www.youtube.com/user/MarinaDelReyHospital",
+              "channelTotalVideos": 219,
+              "channelTotalViews": 133813,
+              "isAgeRestricted": false,
+              "id": "UChrBWGi-K5Qol2cog4sdzVA",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            }
+          ],
+          "domain": "marinahospital.com",
+          "imageUrls": [],
+          "reviews": [],
+          "leadsEnrichment": []
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "title": "Providence Cedars-Sinai Tarzana Medical Center",
+          "subTitle": null,
+          "description": null,
+          "price": null,
+          "categoryName": "Medical Center",
+          "address": "18321 Clark St, Tarzana, CA 91356",
+          "neighborhood": "Tarzana",
+          "street": "18321 Clark St",
+          "city": "Tarzana",
+          "postalCode": "91356",
+          "state": "California",
+          "countryCode": "US",
+          "website": "https://www.providence.org/locations/socal/tarzana-medical-center?Is=location&y_source=1_OTU3NTk5NS03MTUtbG9jYXRpb24ud2Vic2l0ZQ%3D%3D",
+          "phone": "(818) 881-0800",
+          "phoneUnformatted": "+18188810800",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 34.1699552,
+            "lng": -118.5325617
+          },
+          "locatedIn": "Providence Tarzana Emergency Department",
+          "floor": null,
+          "plusCode": "5F98+XX Tarzana, Los Angeles, CA",
+          "menu": null,
+          "servicesLink": null,
+          "totalScore": 3.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJ_YSD7aeZwoARvTXlQD8_ua0",
+          "categories": [
+            "Medical Center"
+          ],
+          "fid": "0x80c299a7ed8384fd:0xadb93f3f40e535bd",
+          "cid": "12518106180157257149",
+          "reviewsCount": 393,
+          "imagesCount": 86,
+          "imageCategories": [
+            "All",
+            "By owner",
+            "Videos",
+            "Street View & 360°"
+          ],
+          "scrapedAt": "2026-07-30T23:10:06.688Z",
+          "reserveTableUrl": null,
+          "googleFoodUrl": null,
+          "hotelStars": null,
+          "hotelDescription": null,
+          "checkInDate": null,
+          "checkOutDate": null,
+          "hotelAds": [],
+          "popularTimesLiveText": null,
+          "popularTimesLivePercent": null,
+          "popularTimesHistogram": {},
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Thursday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Friday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Providence Tarzana Emergency Department": [
+              {
+                "day": "Monday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Friday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Open 24 hours"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [
+            {
+              "category": "People also search for",
+              "title": "Tarzana",
+              "reviewsCount": 2,
+              "totalScore": 3
+            },
+            {
+              "category": "People also search for",
+              "title": "Providence Neonatal Intensive Care Unit - Tarzana",
+              "reviewsCount": 0,
+              "totalScore": 0
+            },
+            {
+              "category": "People also search for",
+              "title": "Providence Tarzana Medical Center: Lai Jim MD",
+              "reviewsCount": 6,
+              "totalScore": 2.3
+            },
+            {
+              "category": "People also search for",
+              "title": "Providence Tarzana Medical Center: Dosik Gary M MD",
+              "reviewsCount": 0,
+              "totalScore": 0
+            },
+            {
+              "category": "People also search for",
+              "title": "Providence Tarzana MRI Center",
+              "reviewsCount": 0,
+              "totalScore": 0
+            }
+          ],
+          "placesTags": [
+            {
+              "title": "Shopping",
+              "count": 1
+            },
+            {
+              "title": "Services",
+              "count": 1
+            },
+            {
+              "title": "Health & Beauty",
+              "count": 24
+            },
+            {
+              "title": "Parking",
+              "count": 1
+            },
+            {
+              "title": "Other",
+              "count": 2
+            }
+          ],
+          "reviewsTags": [
+            {
+              "title": "emergency room",
+              "count": 63
+            },
+            {
+              "title": "compassionate care",
+              "count": 8
+            },
+            {
+              "title": "anesthesiologist",
+              "count": 8
+            },
+            {
+              "title": "discharge process",
+              "count": 9
+            },
+            {
+              "title": "wait time",
+              "count": 19
+            },
+            {
+              "title": "kind staff",
+              "count": 22
+            },
+            {
+              "title": "rude nurse",
+              "count": 4
+            },
+            {
+              "title": "phlebotomist",
+              "count": 2
+            },
+            {
+              "title": "recovery room",
+              "count": 2
+            },
+            {
+              "title": "back surgery",
+              "count": 2
+            }
+          ],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Onsite services": true
+              },
+              {
+                "English": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible parking lot": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Restroom": true
+              }
+            ],
+            "Planning": [
+              {
+                "Appointments recommended": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Parking": [
+              {
+                "On-site parking": true
+              },
+              {
+                "Paid parking garage": true
+              },
+              {
+                "Paid parking lot": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Providence%20Cedars-Sinai%20Tarzana%20Medical%20Center&query_place_id=ChIJ_YSD7aeZwoARvTXlQD8_ua0",
+          "searchPageUrl": "https://www.google.com/maps/search/Hospital/@34.055185398993856,-118.6163245590756,13z?hl=en",
+          "searchString": "Hospital",
+          "language": "en",
+          "rank": 3,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkFFOmOKrUUXIax2_KjOC0cH42vj-_JkCmaxXMrw_RkhGHwXZd8PmteNtjnNxGA2UuZHU0H79TsR516kY-3slcPkJTAo2d5BEy8V6H5DX4g-_-z8EHSGk6CF8xeCF9LaVVmHkLF58yqV3to=w426-h240-k-no",
+          "kgmid": "/g/11b6gldk2j",
+          "reviewsDistribution": {
+            "oneStar": 139,
+            "twoStar": 26,
+            "threeStar": 10,
+            "fourStar": 25,
+            "fiveStar": 193
+          },
+          "questionsAndAnswers": [],
+          "webResults": [],
+          "tableReservationLinks": [],
+          "tableReservationProviders": [],
+          "bookingLinks": [],
+          "restaurantData": {
+            "tableReservationProvider": null
+          },
+          "ownerUpdates": [],
+          "emails": [],
+          "phones": [
+            "818-881-0800",
+            "18445410368",
+            "818-708-5573",
+            "866-747-2455",
+            "818-708-5438",
+            "866-904-6871",
+            "818-708-5341",
+            "818-708-5185",
+            "818-757-4384",
+            "818-708-5196",
+            "888-432-5464",
+            "818-708-5176",
+            "800-378-4189",
+            "800-996-7566"
+          ],
+          "phonesUncertain": [
+            "078509988",
+            "818-881-0800",
+            "125181061801572",
+            "34.171008",
+            "118.532047",
+            "8280983",
+            "630-792-5636",
+            "844-541-0368",
+            "626-927-9293",
+            "425-525-3355",
+            "425-687-3700",
+            "8138-9672",
+            "818-708-5573",
+            "866-747-2455",
+            "818-708-5438",
+            "866-904-6871",
+            "818-708-5341",
+            "818-708-5185",
+            "818-757-4384",
+            "818-708-5196",
+            "888-432-5464",
+            "818-708-5176",
+            "800-378-4189",
+            "800-996-7566"
+          ],
+          "linkedIns": [
+            "https://www.linkedin.com/company/providencehealthsystem"
+          ],
+          "twitters": [
+            "https://twitter.com/providence",
+            "https://twitter.com/ProvCedars"
+          ],
+          "instagrams": [
+            "https://www.instagram.com/providencehealthsystem",
+            "https://www.instagram.com/providencecedars"
+          ],
+          "facebooks": [
+            "https://www.facebook.com/providence",
+            "https://www.facebook.com/ProvidenceTarzana"
+          ],
+          "youtubes": [
+            "https://www.youtube.com/channel/UCCJ8wEkiHBHkVD8Jb7sbIBg"
+          ],
+          "tiktoks": [],
+          "pinterests": [],
+          "discords": [],
+          "facebookProfiles": [
+            {
+              "profileName": "Providence health system",
+              "profilePictureURL": "https://scontent-hou1-1.xx.fbcdn.net/v/t39.30808-1/352506790_6822569877767891_8776379593307972004_n.png?stp=dst-png&cstp=mx180x180&ctp=s180x180&_nc_cat=106&ccb=1-7&_nc_sid=f907e8&_nc_ohc=wAzGW6blBsoQ7kNvwH-wk_o&_nc_oc=AdpAuAORFuV9eh688yo9A5nTt7v4E0_s_5-8exobssgxKAMov3qBoxis3Rghij-QNnCfd67M_YKjrvOfsFUxeVBl&_nc_zt=24&_nc_ht=scontent-hou1-1.xx&_nc_gid=hSwxbHVZtBpLOSEDU7zCdg&_nc_ss=72289&oh=00_AQHiLUujaniBncPvAmAo3F-G_0QAtK4tKR7nP25U8UIEQg&oe=6A71BBD1",
+              "description": "",
+              "username": "providence",
+              "location": null,
+              "followersCount": 69627,
+              "externalProfileURL": "http://www.providence.org/",
+              "profileURL": "https://www.facebook.com/providence",
+              "creationDate": "June 7, 2017",
+              "coverPhoto": "https://scontent-hou1-1.xx.fbcdn.net/v/t39.30808-6/679020588_1388970713265422_3506426239378664600_n.png?stp=dst-png&cstp=mx851x315&ctp=s851x315&_nc_cat=111&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=0xgMz062veYQ7kNvwHybiux&_nc_oc=AdrS1n6G6pmxtpysMqN-THrQeWS1lUHJPKb6BmFXww9kStUh798WyGtGwNvCeTe7KkfYRq06IZM6NQ3tMu4snXK0&_nc_zt=23&_nc_ht=scontent-hou1-1.xx&_nc_gid=EYqeZGBPLbnn6s90GSH57A&_nc_ss=72289&oh=00_AQHpULLeAGpyQE8qSSlIrNxs_7zicbSod_NIGX4XnAg_Mw&oe=6A71B88A",
+              "socialInputUrl": "https://www.facebook.com/providence",
+              "startUrl": "https://www.facebook.com/providence",
+              "info": [
+                "Providence health system. 69,627 likes",
+                "1,221 talking about this",
+                "40,550 were here. Welcome to Providence's Online Community!\n\nWe want to create a..."
+              ],
+              "likes": 69627,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Nonprofit organization"
+              ],
+              "adStatus": "This Page is currently running ads.",
+              "facebookId": "100064575196805",
+              "phone": null,
+              "email": "socialmedia.requests@providence.org",
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            },
+            {
+              "profileName": "Providence Cedars-Sinai Tarzana Medical Center | Tarzana CA",
+              "profilePictureURL": "https://scontent.fmem1-2.fna.fbcdn.net/v/t39.30808-1/347616666_794211988931712_4501691588153419245_n.jpg?stp=dst-jpg_tt6&cstp=mx400x400&ctp=s200x200&_nc_cat=107&ccb=1-7&_nc_sid=f907e8&_nc_ohc=goaYH8y29sgQ7kNvwFqnoHE&_nc_oc=Ado86w_DJbSHHnFyZG_wFj4TdthI26zXjRNgqS2jio-0f--11y2LkVhqo7ag3uoxxa0frrGt_3wcs5t9SgOgyM_I&_nc_zt=24&_nc_ht=scontent.fmem1-2.fna&_nc_gid=guuqLtkrQBPbvthJdWJrhw&_nc_ss=7c289&oh=00_AQEsYM5MHUFrBqSiCDKH0dzLzhIQ0W7arG5VMfD3wjhCAw&oe=6A71AD34",
+              "description": "",
+              "username": "ProvidenceTarzana",
+              "location": "18321 Clark St, Tarzana, CA, United States, 91356",
+              "followersCount": 1687,
+              "externalProfileURL": "http://www.providence.org/tarzana",
+              "profileURL": "https://www.facebook.com/ProvidenceTarzana",
+              "creationDate": "May 6, 2019",
+              "coverPhoto": "https://scontent.fmem1-1.fna.fbcdn.net/v/t39.30808-6/548221435_1115086314060376_262385368167072976_n.png?stp=dst-png&cstp=mx820x360&ctp=s820x360&_nc_cat=103&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=vVuElV0bz0YQ7kNvwHTjphT&_nc_oc=AdoHNp7vpjn6iHnWsBh43fyr4KGasRv8-SU1qEhvFU-DlzbmIg8ipagJgfdPupesEeALyU4OZO1zmBfyJlCRWjCH&_nc_zt=23&_nc_ht=scontent.fmem1-1.fna&_nc_gid=9jrF1MU4ag7FhZ08Zr3o7A&_nc_ss=7c289&oh=00_AQEy2ScExdUhzOgIaijzi_H-C2KuC2hCRxtzGpXLONk0qA&oe=6A719547",
+              "socialInputUrl": "https://www.facebook.com/ProvidenceTarzana",
+              "startUrl": "https://www.facebook.com/ProvidenceTarzana",
+              "info": [
+                "Providence Cedars-Sinai Tarzana Medical Center, Tarzana. 1,687 likes",
+                "326 talking about this",
+                "17,344 were here. Providence Tarzana has been a..."
+              ],
+              "likes": 1687,
+              "messenger": null,
+              "categories": [
+                "Page",
+                "Hospital"
+              ],
+              "adStatus": "This Page is currently running ads.",
+              "facebookId": "100066770540597",
+              "phone": "(818) 881-0800",
+              "email": null,
+              "followingCount": null,
+              "privateProfile": null,
+              "accountVerificationStatus": null
+            }
+          ],
+          "instagramProfiles": [
+            {
+              "profileName": "Providence",
+              "profilePictureURL": "https://scontent.cdninstagram.com/v/t51.2885-19/82171117_2405578916407608_2995554298187154126_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=106&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4zMDAuQzMifQ%3D%3D&_nc_ohc=BJutihSd6I4Q7kNvwFHy4dY&_nc_oc=Adr0M638jEV7ic9g6u244jIzYudqyk-BqmEQDwTryJMq8Gzw7bqeXN2dy0BHf-YLtWI&_nc_zt=24&_nc_ht=scontent.cdninstagram.com&_nc_ss=72a8c&oh=00_AQGJXPq-DuOVk-T6dmyHHWInYhyb6bbiNEKq9qZHtc2osA&oe=6A71C629",
+              "description": "Making communities healthier through expanded access, affordability & services for those who need them. Visit www.providence.org for a provider.",
+              "username": "providencehealthsystem",
+              "followersCount": 16695,
+              "followingCount": 187,
+              "externalProfileURL": "https://www.instagram.com/providencehealthsystem",
+              "profileURL": "https://www.instagram.com/providencehealthsystem",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.instagram.com/providencehealthsystem",
+              "startUrl": "https://www.instagram.com/providencehealthsystem",
+              "isBusinessAccount": true,
+              "postsCount": 2805,
+              "accountId": "1749147695",
+              "coverPhoto": null,
+              "location": null,
+              "creationDate": null
+            },
+            {
+              "profileName": "Providence Cedars-Sinai Tarzana",
+              "profilePictureURL": "https://scontent-ham3-1.cdninstagram.com/v/t51.2885-19/312729553_976527310416414_5752587389198157697_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=106&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4zMjAuQzMifQ%3D%3D&_nc_ohc=l7p1egoOV54Q7kNvwF413y1&_nc_oc=AdornKuWt64h_tfrMD7RvtuSclQW3UgYp55shDWLKouXsg3gJUeQXPAIAJqtSpHQJms&_nc_zt=24&_nc_ht=scontent-ham3-1.cdninstagram.com&_nc_ss=72a8c&oh=00_AQFfXardqTbzhRkKsqQXqGs6MJ2t4vp4LJKClFICe3bLcA&oe=6A719F12",
+              "description": "Our powerful partnership brings the San Fernando Valley incredible care, incredibly close to home.",
+              "username": "providencecedars",
+              "followersCount": 1848,
+              "followingCount": 105,
+              "externalProfileURL": "https://www.instagram.com/providencecedars",
+              "profileURL": "https://www.instagram.com/providencecedars",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.instagram.com/providencecedars",
+              "startUrl": "https://www.instagram.com/providencecedars",
+              "isBusinessAccount": true,
+              "postsCount": 250,
+              "accountId": "56041291275",
+              "coverPhoto": null,
+              "location": null,
+              "creationDate": null
+            }
+          ],
+          "tiktokProfiles": [],
+          "twitterProfiles": [
+            {
+              "profileName": "Providence",
+              "profilePictureURL": "https://pbs.twimg.com/profile_images/1245041892707815424/wS_r5EUX_normal.jpg",
+              "description": "Make communities healthier through expanded access, greater affordability & services for those who need them most. Visit https://t.co/sKTfeXlWQw for a provider.",
+              "username": "providence",
+              "followersCount": 5698,
+              "followingCount": 248,
+              "location": "AK, WA, CA, MT, OR, & TX",
+              "profileURL": "https://x.com/providence",
+              "creationDate": "Wed Feb 15 18:39:11 +0000 2017",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "coverPhoto": "https://pbs.twimg.com/profile_banners/831935904918892544/1748884965",
+              "socialInputUrl": "https://www.twitter.com/providence",
+              "startUrl": "https://www.twitter.com/providence",
+              "mediaCount": 2693,
+              "id": "831935904918892544",
+              "isBlueVerified": false,
+              "externalProfileURL": null
+            },
+            {
+              "profileName": "Providence Cedars-Sinai Tarzana",
+              "profilePictureURL": "https://pbs.twimg.com/profile_images/1585051807344041984/q3YhZngE_normal.png",
+              "description": "Our powerful partnership brings the San Fernando Valley incredible care, incredibly close to home.",
+              "username": "ProvCedars",
+              "followersCount": 19,
+              "followingCount": 84,
+              "location": "18321 Clark St Tarzana, CA",
+              "profileURL": "https://x.com/ProvCedars",
+              "creationDate": "Fri Oct 21 16:41:08 +0000 2022",
+              "privateProfile": false,
+              "accountVerificationStatus": false,
+              "coverPhoto": "https://pbs.twimg.com/profile_banners/1583498561005551626/1666371187",
+              "socialInputUrl": "https://www.twitter.com/provcedars",
+              "startUrl": "https://www.twitter.com/provcedars",
+              "mediaCount": 21,
+              "id": "1583498561005551626",
+              "isBlueVerified": false,
+              "externalProfileURL": null
+            }
+          ],
+          "youtubeProfiles": [
+            {
+              "profileName": "Providence",
+              "profilePictureURL": "https://yt3.googleusercontent.com/ytc/AIdro_lNMIbLP9DmRr1NNtS5ZdNpClloZHEIKY7Ta-vpuMsrH3A=s160-c-k-c0x00ffffff-no-rj",
+              "location": "United States",
+              "description": "Providence St. Joseph Health is a new organization created by Providence Health & Services and St. Joseph Health with the goal of improving the health of the communities it serves, especially those who are poor and vulnerable.\n\nProvidence St. Joseph Health provides accessible, high-quality, compassionate health care in an increasingly uncertain world—regardless of coverage or ability to pay. We help people and communities benefit from the best health care model for the future—today.",
+              "followersCount": 14100,
+              "externalProfileURL": "https://www.youtube.com/channel/UCCJ8wEkiHBHkVD8Jb7sbIBg",
+              "profileURL": "https://www.youtube.com/channel/UCCJ8wEkiHBHkVD8Jb7sbIBg",
+              "creationDate": "Jun 1, 2015",
+              "coverPhoto": "https://yt3.googleusercontent.com/VTRBv4DZ9W3l6xutQAr-hhswvgWIsredtNpG12OpvRK0CLWc_PnmFyGHDDDejF3wC-4ukmUYTqs=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+              "accountVerificationStatus": false,
+              "socialInputUrl": "https://www.youtube.com/channel/UCCJ8wEkiHBHkVD8Jb7sbIBg",
+              "startUrl": "https://www.youtube.com/channel/UCCJ8wEkiHBHkVD8Jb7sbIBg",
+              "channelTotalVideos": 3599,
+              "channelTotalViews": 18878112,
+              "isAgeRestricted": false,
+              "id": "UCCJ8wEkiHBHkVD8Jb7sbIBg",
+              "username": null,
+              "followingCount": null,
+              "privateProfile": null
+            }
+          ],
+          "domain": "providence.org",
+          "imageUrls": [],
+          "reviews": [],
+          "leadsEnrichment": []
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Scrape Maps",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Maps": {
+      "main": [
+        [
+          {
+            "node": "Get Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Leads": {
+      "main": [
+        [
+          {
+            "node": "Keep Top Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Top Leads": {
+      "main": [
+        [
+          {
+            "node": "SSave Top Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Total Leads": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Scrape Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Website": {
+      "main": [
+        [
+          {
+            "node": "Scrape Info From Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Random Delay": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SSave Top Leads": {
+      "main": [
+        [
+          {
+            "node": "Get Total Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Info From Website": {
+      "main": [
+        [
+          {
+            "node": "Random Delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "df9a58dd-fdc0-4b4d-8aef-efb18e2fde11",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6cc9ab3580f3f022a1538c0fb6e28622179839b1e47313564949f75a1eb6410d"
+  },
+  "nodeGroups": [],
+  "id": "wZgPR2Xf3Skn1C7o",
+  "tags": []
+}
