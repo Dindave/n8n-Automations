@@ -1,0 +1,1074 @@
+{
+  "name": "2- Resume Analyser Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "has:attachment subject:(application OR resume OR CV)"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "id": "7adaad4a-84f6-437e-9bf8-c3ef6d4f7ab8",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1808,
+        80
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "attachment_0",
+        "name": "={{ $binary.attachment_0.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1g-4jtynnZ2vjSmUqZ7mPgsd1PwZM4T_k",
+          "mode": "list",
+          "cachedResultName": "AI Prompt Writer Resumes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1g-4jtynnZ2vjSmUqZ7mPgsd1PwZM4T_k"
+        },
+        "options": {}
+      },
+      "id": "4624634f-9e9e-4058-ab89-383f2b93a8a6",
+      "name": "Save Resume to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1600,
+        80
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c7HTSAbxJXQZoT3l",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "b0ae6d06-10b9-44c7-b8a8-ed52b3eddd5b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Word"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4f762f31-9c9a-4ba2-bd65-525a9f488e74"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "text/plain",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ddadfe14-5d61-47c6-9af7-cdf948343b67"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0531d6ba-c9c3-4157-b0b5-fd4314b7f95e",
+      "name": "File Type Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -1392,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "id": "941b7463-cc77-4da5-8d6c-6da5900be6ce",
+      "name": "Download Google Doc",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -912,
+        -208
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c7HTSAbxJXQZoT3l",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "5d60818a-1b15-4ba1-b521-615ed14f87cf",
+      "name": "Extract Text (Doc)",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "8b4d970e-3ef4-44be-bf50-a36d78803833",
+      "name": "Download PDF",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -912,
+        -48
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c7HTSAbxJXQZoT3l",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "fa469ba2-4c8f-4537-93e5-bd61f721ac4f",
+      "name": "Extract Text (PDF)",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "ec56ce3b-2731-468b-ad28-0732fdbeb90b",
+      "name": "Download Text File",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -912,
+        112
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c7HTSAbxJXQZoT3l",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "text",
+        "options": {}
+      },
+      "id": "fa593cbd-354e-4e86-952d-0f5545816ec3",
+      "name": "Extract Text (Txt)",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.text }}",
+              "id": "147e976b-2984-42b9-a751-18ad42006e52"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "240821d0-134a-40ae-9c34-4915b92229b8",
+      "name": "Standardize Resume",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -416,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1TYTbt-AeGmpTTCbgUBjWEk825hlVxXrWwtO7kXH9GDc",
+          "mode": "list",
+          "cachedResultName": "Job Description — Senior AI Prompt Writer",
+          "cachedResultUrl": "https://docs.google.com/document/d/1TYTbt-AeGmpTTCbgUBjWEk825hlVxXrWwtO7kXH9GDc/edit?usp=drivesdk"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "id": "5cb9b766-b53d-4d55-98ad-6f2f419437db",
+      "name": "Get Job Description File",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -16,
+        112
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c7HTSAbxJXQZoT3l",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "d4ee9da8-0b6b-4b48-a438-2af9f78b3f2d",
+      "name": "Extract Text (JD)",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        192,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "b3bddb30-8f38-4d7e-8252-2d956c498a35",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1552,
+        576
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"score\": { \"type\": \"number\", \"description\": \"Fit score from 0-100\" },\n    \"isGoodFit\": { \"type\": \"boolean\" },\n    \"matchedSkills\": { \"type\": \"array\", \"items\": { \"type\": \"string\" } },\n    \"missingSkills\": { \"type\": \"array\", \"items\": { \"type\": \"string\" } },\n    \"strengths\": { \"type\": \"string\" },\n    \"risks\": { \"type\": \"string\" },\n    \"justification\": { \"type\": \"string\" }\n  },\n  \"required\": [\"score\", \"isGoodFit\", \"matchedSkills\", \"justification\"]\n}"
+      },
+      "id": "eb1a9b90-068e-48e6-843a-b10120f2ce51",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -1792,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=RESUME: {{ $('Standardize Resume').item.json.text }}\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert technical recruiter specializing in AI, automation, and software roles. You have been given a job description and a candidate resume. Your task is to analyze the resume in relation to the job description and provide a detailed screening report.\n\nFocus specifically on how well the candidate matches the core requirements and ideal profile outlined in the job description. Evaluate both technical skill alignment and business-context understanding. Use reasoning grounded in the actual content of the resume and job post — avoid making assumptions.\n\n## Output\nYour output should follow this exact format:\n\nCandidate Strengths:\nList the top strengths or relevant qualifications the candidate brings to the table. Be specific.\n\nCandidate Weaknesses:\nList areas where the candidate is lacking or mismatched based on the job description.\n\nRisk Factor:\n- Assign a risk score (Low / Medium / High)\n- Explain the worst-case scenario if this candidate is hired.\n\nReward Factor:\n- Assign a reward score (Low / Medium / High)\n- Describe the best-case scenario — what value could this candidate unlock?\n- Does the candidate appear to be a short-term or long-term fit?\n\nOverall Fit Rating (0-10):\nAssign a number between 0 (terrible match) and 10 (perfect match). Do not give decimals.\n\nJustification for Rating:\nExplain clearly why this candidate received that score. Reference specific resume content and how it aligns or doesn't with the job description.\n\nJob Description\n{{ $json.text }}"
+        }
+      },
+      "id": "2eb39c1d-df02-45e3-afbc-7763e9413f80",
+      "name": "Analyze Fit (AI Agent)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1776,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json['Overall Fit'] }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              },
+              "id": "c2de810a-4452-47ec-bc18-ec070c45ad10"
+            },
+            {
+              "id": "9345c1ad-52ab-431e-ba25-da5ffbe95bf5",
+              "leftValue": "={{ $json['Overall Fit'] }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9a942d52-a811-45d8-a393-03fa6615eb2f",
+      "name": "Is Good Fit?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -880,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.output.subject }}",
+        "message": "={{ $json.output['email body'] }}",
+        "options": {
+          "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+          "sendTo": "={{ $('Gmail Trigger').item.json.headers.from }}"
+        }
+      },
+      "id": "c7443f6a-1f1a-473d-93d9-6dc98e878065",
+      "name": "Create Interview Draft (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        384
+      ],
+      "webhookId": "5688b399-5f0b-47ad-ae69-15b8cb7b0053",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3Yz4BrTLhovZ6pDr",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v2/files/{{ $json.id }}/copy?convert=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1120,
+        -32
+      ],
+      "id": "d8e0fd39-9580-469e-bdf2-d5ae97b46e96",
+      "name": "HTTP Request",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c7HTSAbxJXQZoT3l",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Standardize Resume').item.json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "First name",
+              "description": "the first name of the candidate",
+              "required": true
+            },
+            {
+              "name": "email address",
+              "description": "the email address of the candidate",
+              "required": true
+            },
+            {
+              "name": "Last name",
+              "description": "the last name of the candidate",
+              "required": true
+            },
+            {
+              "name": "Job Title",
+              "description": "the title of the job"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -1424,
+        384
+      ],
+      "id": "9c726723-f525-4b87-84b8-62db056325a8",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1OSrjnMML8yTBvrHM9B0HSE_71yZ6BE9Y8pjns7MGq-I",
+          "mode": "list",
+          "cachedResultName": "Resume Screener",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OSrjnMML8yTBvrHM9B0HSE_71yZ6BE9Y8pjns7MGq-I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OSrjnMML8yTBvrHM9B0HSE_71yZ6BE9Y8pjns7MGq-I/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{$now.format(\"yyyy-MM-dd h-mm a\")}}",
+            "Resume": "={{ $('Save Resume to Drive').item.json.webViewLink }}",
+            "First Name": "={{ $json.output['First name'] }}",
+            "Last Name": "={{ $json.output['Last name'] }}",
+            "Email Address": "={{ $json.output['email address'] }}",
+            "Strengths": "={{ $('Analyze Fit (AI Agent)').item.json.output.strengths }}",
+            "Risk factor": "={{ $('Analyze Fit (AI Agent)').item.json.output.risks }}",
+            "Justification": "={{ $('Analyze Fit (AI Agent)').item.json.output.justification }}",
+            "Overall Fit": "={{ $('Analyze Fit (AI Agent)').item.json.output.isGoodFit }}",
+            "Weaknesses": "={{ $('Analyze Fit (AI Agent)').item.json.output.missingSkills[0] }}\n\n{{ $('Analyze Fit (AI Agent)').item.json.output.missingSkills[1] }}\n\n{{ $('Analyze Fit (AI Agent)').item.json.output.missingSkills[2] }}",
+            "Reward factor": "={{ $('Analyze Fit (AI Agent)').item.json.output.matchedSkills[0] }}\n\n{{ $('Analyze Fit (AI Agent)').item.json.output.matchedSkills[1] }}\n\n{{ $('Analyze Fit (AI Agent)').item.json.output.matchedSkills[2] }}\n\n{{ $('Analyze Fit (AI Agent)').item.json.output.matchedSkills[3] }}\n\n{{ $('Analyze Fit (AI Agent)').item.json.output.matchedSkills[4] }}\n\n{{ $('Analyze Fit (AI Agent)').item.json.output.matchedSkills[5] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume",
+              "displayName": "Resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Strengths",
+              "displayName": "Strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Weaknesses",
+              "displayName": "Weaknesses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Risk factor",
+              "displayName": "Risk factor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reward factor",
+              "displayName": "Reward factor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Overall Fit",
+              "displayName": "Overall Fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Justification",
+              "displayName": "Justification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1104,
+        384
+      ],
+      "id": "26cc0569-77e1-4919-8f89-4e88d07a04f7",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['Overall Fit'] }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert corporate recruiter and professional business writer. You have been given the results of a candidate screening analysis, including the candidate's name, the job title, an overall fit rating, and a boolean fit decision. Your task is to write a single, complete, ready-to-send email to the candidate based on that decision.\n\nDo not re-evaluate the candidate's fit. The fit decision has already been made upstream — your only job is to communicate it well, in a warm, respectful, and professional tone that reflects positively on the company regardless of outcome.\n\n## Input Variables\n- Candidate Name: {{ $('Information Extractor').item.json.output['First name'] }}\n- Job Title: {{ $('Information Extractor').item.json.output['Job Title'] }}\n- Is Good Fit: {{ $('Analyze Fit (AI Agent)').item.json.output.isGoodFit }}\n- Overall Fit Rating:{{ $('Analyze Fit (AI Agent)').item.json.output.score }}\n- Candidate Strengths: {{ $('Analyze Fit (AI Agent)').item.json.output.matchedSkills }}\n- Candidate Weaknesses: {{ $('Analyze Fit (AI Agent)').item.json.output.missingSkills }}\n\n## Instructions\n\nIf Is Good Fit is TRUE, write an **advancement email** that:\n- Opens with a genuine, specific congratulations — reference at least one real strength from the candidate's profile so it doesn't read as generic\n- Don't use \"congratulations\" in the email body if it is already in the subject.\n- Clearly states they have been selected to move forward to the next stage (interview) for the specific job title\n- States that the interview date and time will be communicated separately/soon — do NOT invent or guess a specific date, time, or interviewer name\n- Briefly sets expectations for what the next stage generally involves (e.g. a conversation with the hiring team) without overpromising details you don't have\n- Invites them to reach out with any questions in the meantime\n- Closes warmly and professionally, with a placeholder signature line\n\nIf Is {{ $('Append row in sheet').item.json['Overall Fit'] }} is false, write a Rejection email that:\n- Opens with genuine thanks for their time and interest in the role and company\n- Delivers the decision clearly and kindly within the first few lines — do not bury it or be evasive, but do not use harsh or clinical language either\n- Never states or implies a numeric score, \"risk factor,\" or any internal evaluation label\n- Optionally offers one general, encouraging note about their background (e.g. their experience is valued) without contradicting the rejection or making false promises\n- Avoids explaining the rejection in a way that could sound like a specific, actionable critique (no line-by-line \"you're missing X skill\" — keep it general, e.g. \"we've decided to move forward with other candidates whose experience more closely matches our current needs\")\n- Leaves the door open in a genuine way — e.g. encourages them to apply for future roles if appropriate — without making commitments\n- Closes respectfully, with a placeholder signature line\n\n## Tone and Style Rules\n- Professional but human — avoid corporate jargon, avoid being overly stiff or robotic\n- Concise: 120–180 words for either email\n- No exclamation-point overuse; sound calm and confident, not overly excited or apologetic\n- Never mention \"AI,\" \"algorithm,\" \"automated screening,\" \"score,\" or any internal scoring/rating system\n- Always personalize with the candidate's name and the job title — never leave placeholder brackets like [Name] or [Job Title] in the final output\n- Use a proper greeting (\"Dear {{ $('Information Extractor').item.json.output['First name'] }},\") and a professional sign-off (\"Best regards,HR SitusAMC \n\" )\n\n## Output\nReturn ONLY the final email — subject line first, then a blank line, then the email body. No preamble, no explanation, no markdown formatting, no notes about which branch was chosen. The subject should be a maximum of six words and it should start with Congratulation.\n\nFormat exactly as:\nSubject: [subject].\n[email body]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -672,
+        384
+      ],
+      "id": "b6e38c6b-d4b6-4b5e-8ec4-49dba8611f4e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini",
+          "cachedResultUrl": ""
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        592
+      ],
+      "id": "a69ba111-b250-47b9-862e-c7973fcdf07d",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "subject",
+              "description": "this is the subject of the email",
+              "required": true
+            },
+            {
+              "name": "email body",
+              "description": "the email body",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        384
+      ],
+      "id": "e0978ba4-4ac7-4bac-b013-c007a0b1feb0",
+      "name": "Information Extractor1"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        384
+      ],
+      "id": "5db458eb-50cb-4787-ad9b-072eafda8480",
+      "name": "Wait",
+      "webhookId": "3af66881-cbd3-4c6c-8858-54522b393a4e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Save Resume to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Resume to Drive": {
+      "main": [
+        [
+          {
+            "node": "File Type Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Type Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Text File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Extract Text (Doc)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text (Doc)": {
+      "main": [
+        [
+          {
+            "node": "Standardize Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download PDF": {
+      "main": [
+        [
+          {
+            "node": "Extract Text (PDF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text (PDF)": {
+      "main": [
+        [
+          {
+            "node": "Standardize Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Text File": {
+      "main": [
+        [
+          {
+            "node": "Extract Text (Txt)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text (Txt)": {
+      "main": [
+        [
+          {
+            "node": "Standardize Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Standardize Resume": {
+      "main": [
+        [
+          {
+            "node": "Get Job Description File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Job Description File": {
+      "main": [
+        [
+          {
+            "node": "Extract Text (JD)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text (JD)": {
+      "main": [
+        [
+          {
+            "node": "Analyze Fit (AI Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Fit (AI Agent)",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Analyze Fit (AI Agent)",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Fit (AI Agent)": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Good Fit?": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Download Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Is Good Fit?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Information Extractor1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Create Interview Draft (Gmail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b3da1138-a46f-4283-a309-fc5b2e0149a8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6cc9ab3580f3f022a1538c0fb6e28622179839b1e47313564949f75a1eb6410d"
+  },
+  "nodeGroups": [],
+  "id": "kkDPySOosRPFIILt",
+  "tags": []
+}
