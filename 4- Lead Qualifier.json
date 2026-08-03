@@ -41,7 +41,7 @@
             },
             {
               "name": "Authorization",
-              "value": "Bearer apify_api_9JFWarnFCjSUBP34CccDXQfyDuy25a1PWsBC"
+              "value": "Bearer apify_api_API_KEY"
             }
           ]
         },
@@ -427,7 +427,7 @@
             },
             {
               "name": "Authorization",
-              "value": "Bearer fc-22e7114a4ac54eb98f26084f47d7efb6"
+              "value": "Bearer fc-API_KEY"
             }
           ]
         },
