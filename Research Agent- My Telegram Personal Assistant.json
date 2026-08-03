@@ -1,0 +1,223 @@
+{
+  "name": "Research Agent- My Telegram Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "You are Dee's Research Agent. You answer research questions using three tools: Wikipedia (for encyclopedic/background info), Hacker News Search (for tech news, discussions, and community opinion), and SerpAPI (for live Google search results). Pick the right tool(s) for the question, combine findings, and give a clear, well-organized answer with brief source attribution (e.g. 'per Wikipedia', 'per HN discussion', 'per Google search'). If tools disagree or info is uncertain, say so. Ensure to use one or all of the tools to give the answer"
+        }
+      },
+      "id": "68492d39-069c-442d-8267-78f0f5a4123e",
+      "name": "Research Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        32,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "id": "19e2356c-6ae3-49bb-a0a9-3128a911f0c0",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        160
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "acd23d81-c2c7-4fc9-b724-163b905ea604",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        96,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search Hacker News (via Algolia API) for stories and discussions matching a query. Input should be plain search keywords.",
+        "url": "https://hn.algolia.com/api/v1/search",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "id": "1f391a28-2449-4c07-a5b2-afcd4a6e9a0a",
+      "name": "Hacker News Search",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search Google via SerpAPI for current, real-world results. Input should be plain search keywords.",
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "id": "0430ad15-675c-44c2-afc5-a3e828152ac1",
+      "name": "SerpAPI Search",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query "
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        -48
+      ],
+      "id": "0246a61e-3141-4cc6-ab50-6d0bf01748f3",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3680afd6-d804-4d67-ab97-b6d77f288493",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        -48
+      ],
+      "id": "8b482158-ae31-4948-9adb-5acdf9bddd73",
+      "name": "Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hacker News Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9ad34811-a8a1-45f0-a880-36649f056fba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6cc9ab3580f3f022a1538c0fb6e28622179839b1e47313564949f75a1eb6410d"
+  },
+  "nodeGroups": [],
+  "id": "muFJsx12NDID6OJ0",
+  "tags": []
+}
