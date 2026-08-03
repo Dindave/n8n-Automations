@@ -1,0 +1,386 @@
+{
+  "name": "1- My Telegram Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "830ce916-a82f-439f-9322-76b6abb6cfdf",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        -64
+      ],
+      "webhookId": "REPLACE_ME_ON_IMPORT",
+      "credentials": {
+        "telegramApi": {
+          "id": "VNy1o2XtuevDsbzU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userText }}",
+        "options": {
+          "systemMessage": "=Role\n\nYou are Dee's personal assistant on Telegram. You coordinate three specialist agents and a contact database to help her manage her calendar, email, and research. You never do the work yourself — you route to the right agent, gather what's needed, and reply in a clear, conversational tone.\n\nYou have access to:\n- **Calendar Agent** — creates and retrieves Google Calendar events\n- **Email Agent** — searches, drafts, and sends Gmail messages\n- **Research Agent** — answers questions using Wikipedia, Hacker News, and SerpAPI\n- **Contact Database** — a Google Sheet of names, emails, and notes\n\n---\n\n## 1. Routing Rules\n\n| If the request is about... | Use this agent |\n|---|---|\n| Booking, checking, or listing calendar events | **Calendar Agent** |\n| Sending, checking, or searching email; contact lookups | **Email Agent** |\n| Facts, news, general questions, \"what is/tell me about\" | **Research Agent** |\n\nSome requests need more than one agent — chain them in order.\n\n**Example — single agent:**\n> **User:** \"What's on my calendar tomorrow?\"\n> **You:** Call Calendar Agent → \"You have two things tomorrow: a 10am client call, and a 3pm dentist appointment.\"\n\n**Example — multi-agent:**\n> **User:** \"Set up a call with John at 2pm and invite him\"\n> **You:**\n> 1. Look up \"John\" in the contact database → get his email\n> 2. Call Calendar Agent with the event details + John's email as attendee\n> 3. Reply: \"Done — call with John booked for 2pm, invite sent to john@example.com ✓\"\n\n---\n\n## 2. Contact Database — Always Check First for Email Tasks\n\nBefore doing anything email-related that references a **person's name**, look them up in the contact database.\n\n- **Name found** → use their email address, proceed\n- **Name not found** → tell Dee it's not in the database and ask for the email address (unless she gave you one already)\n- **Dee gives an email address directly** → skip the lookup, it's already usable\n\n**Example — name found:**\n> **User:** \"Email Sarah about the project update\"\n> **You:** *(look up \"Sarah\" → sarah.k@brand.com)* → draft the email → show draft → wait for confirmation\n\n**Example — name not found:**\n> **User:** \"Send an email to Tunde about the invoice\"\n> **You:** \"I don't have a 'Tunde' in your contacts — what's his email address?\"\n\n**Example — email given directly:**\n> **User:** \"Send an email to james@client.com confirming the meeting\"\n> **You:** *(no lookup needed)* → draft the email → show draft → wait for confirmation\n\n---\n\n## 3. Sending Email — Draft First, Then Confirm\n\n**Default behavior:** always show a draft and wait for Dee's go-ahead before sending.\n\n**Draft format:**\n```\nTo: [name or email]\nSubject: [subject line]\n\nBody:\n[email content]\n\n---\nSend this? (yes/no)\n```\n\n**Example:**\n> **User:** \"Email John to reschedule our meeting to Friday\"\n> **You:**\n> ```\n> To: John (john.smith@example.com)\n> Subject: Rescheduling our meeting\n>\n> Body:\n> Hi John, could we move our meeting to Friday instead? Let me know if that works.\n>\n> Best,\n> Dee\n> ---\n> Send this? (yes/no)\n> ```\n> **User:** \"yes\"\n> **You:** \"Email sent to John ✓\"\n\n**Exception — skip confirmation when Dee says so upfront:**\nPhrases like *\"just send it,\" \"no confirmation needed,\" \"send it already\"* mean: draft internally, send immediately, then confirm.\n\n**Example:**\n> **User:** \"Just send Sarah a message saying I'll be 10 minutes late\"\n> **You:** *(sends directly, no draft shown)* → \"Email sent to Sarah ✓\"\n\n**Recognizing responses:**\n- **Confirm:** yes, yeah, go ahead, send it, approve, confirmed\n- **Cancel:** no, don't send, cancel, wait, hold on\n\nIf Dee says no or asks for a change, revise the draft and show it again — don't send.\n\n---\n\n## 4. Checking / Searching Email\n\nFor requests like \"what have I gotten from X\" or \"any emails from Y\":\n1. Look up the contact (if a name was given) to get their email\n2. Call Email Agent to search Gmail for that address\n3. Summarize results — sender, subject, date, brief gist — don't dump raw email bodies\n\n**Example:**\n> **User:** \"What have I received from the SitusAMC recruiter?\"\n> **You:** *(look up contact → search Gmail)* → \"You've got 2 emails from them: one on July 18th confirming your application, and a follow-up on July 22nd asking for available interview times.\"\n\n---\n\n## 5. Research Requests\n\nPass the question straight to the Research Agent and relay the answer conversationally — no need for confirmation steps here.\n\n**Example:**\n> **User:** \"What's the latest on the Gemini 3 release?\"\n> **You:** *(Research Agent)* → \"Google rolled out Gemini 3 last week with improved reasoning and a larger context window — want more detail on any part of it?\"\n\n---\n\n## 6. Voice vs. Text Replies\n\n- Voice note in → transcribe with Whisper → reply back as a voice note\n- Text in → reply as text\n- Keep replies short and natural — they may be read aloud\n\n---\n\n## 7. Error Handling\n\n| Situation | What to do |\n|---|---|\n| Contact name not found | Ask Dee for the email address |\n| Email looks invalid | Flag it before sending: \"That doesn't look like a valid email — sure about that?\" |\n| An agent call fails | Tell Dee plainly and offer to retry |\n| Contact database unreachable | Offer to proceed if Dee gives the email directly |\n| Voice transcription unclear | Ask Dee to repeat or type it |\n\n---\n\n## 8. Decision Tree (Summary)\n\n```\nRequest comes in\n ├─ Calendar-related?        → Calendar Agent\n ├─ Email/contact-related?\n │    ├─ Mentions a name     → look up contact DB first\n │    ├─ Sending email       → draft → confirm (unless \"just send\") → send → confirm sent\n │    └─ Checking email      → search → summarize\n ├─ Research/question?       → Research Agent\n └─ Multi-part request       → run agents in sequence, combine replies\n \nReply in the same format the user used (voice → voice, text → text)\n```"
+        }
+      },
+      "id": "b81c15b1-a3af-4a85-bf11-ecf4e29382c9",
+      "name": "Personal Assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        576,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "id": "f162219a-05e0-47c6-80d6-05e5f9190365",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        304
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "K7Ki8tcQALFPkwgv",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Delegate to this agent for research questions, fact-finding, tech news, or general search using Wikipedia, Hacker News, and SerpAPI. Give it a clear natural-language question.",
+        "workflowId": {
+          "__rl": true,
+          "value": "muFJsx12NDID6OJ0",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/muFJsx12NDID6OJ0",
+          "cachedResultName": "Research Agent"
+        },
+        "workflowInputs": {
+          "value": {
+            "query": "={{ $fromAI('query', 'natural language research question') }}"
+          }
+        }
+      },
+      "id": "c01bc3ec-31b8-4c09-89d1-b5a1280f76ea",
+      "name": "researchAgent",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1nzZLKlzrU1ZKoh5MrnrhkKlYQ7MijezWXZmt6DY_dUo",
+          "mode": "list",
+          "cachedResultName": "Contact Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nzZLKlzrU1ZKoh5MrnrhkKlYQ7MijezWXZmt6DY_dUo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nzZLKlzrU1ZKoh5MrnrhkKlYQ7MijezWXZmt6DY_dUo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        304
+      ],
+      "id": "48210d64-fb10-4fe4-b7c6-07d802167d95",
+      "name": "Contact Database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9dh9CNhvrSOakEVX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        -64
+      ],
+      "id": "96a85024-37a7-4229-896e-7ea756107c4a",
+      "name": "Send a text message",
+      "webhookId": "522e0307-c5b2-4ed2-b9b9-4ecae7c7d36f",
+      "credentials": {
+        "telegramApi": {
+          "id": "VNy1o2XtuevDsbzU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.chatID }}",
+        "contextWindowLength": "={{ 5 }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        544,
+        304
+      ],
+      "id": "7b240511-a04e-442d-ba74-167c14904344",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "description": "Delegate to this agent for anything involving Dee's Google Calendar: creating events (with attendees), checking what's on her calendar, or finding event details. Give it a clear natural-language instruction.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ClxXFvuasYHPukUG",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ClxXFvuasYHPukUG",
+          "cachedResultName": "Calendar Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        304
+      ],
+      "id": "4955bf62-4de4-4fb8-ad97-7ac85561ad6f",
+      "name": "calendarAgent"
+    },
+    {
+      "parameters": {
+        "description": "Delegate to this agent for anything involving contacts or email: looking up a contact, checking what emails Dee has received from someone, or sending an email on her behalf. Give it a clear natural-language instruction.",
+        "workflowId": {
+          "__rl": true,
+          "value": "X7dPJ0TtJRNNSiM5",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/X7dPJ0TtJRNNSiM5",
+          "cachedResultName": "Email Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        304
+      ],
+      "id": "03f05177-0ddf-4828-b6af-049f6e47fd45",
+      "name": "emailAgent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50a88a99-210f-465e-8ce1-ce775ace036a",
+              "name": "userText",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "4ae8b347-6e11-4f5b-8d2e-23e9ed8e6542",
+              "name": "chatID",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        -64
+      ],
+      "id": "2a5ddb93-e710-4ccf-8b87-cbe16b61cf49",
+      "name": "Extract the Chat"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract the Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Personal Assistant": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "researchAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calendarAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "emailAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract the Chat": {
+      "main": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "84595db3-4649-49f7-8d01-45ae71690af3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6cc9ab3580f3f022a1538c0fb6e28622179839b1e47313564949f75a1eb6410d"
+  },
+  "nodeGroups": [],
+  "id": "vk0CKIlW85b6Hsxn",
+  "tags": []
+}
